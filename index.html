@@ -987,9 +987,6 @@
           <button type="button" onclick="openPopup()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#092B22] border border-[#C8A86B]/60 text-[#E5C98D] text-xs font-bold hover:bg-[#0D3B2E] transition" title="팝업창(popup.png) 다시보기">
             <span>🔔 팝업 보기</span>
           </button>
-          <button type="button" onclick="toggleOgPreviewBar()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#092B22] border border-[#C8A86B]/60 text-[#E5C98D] text-xs font-bold hover:bg-[#0D3B2E] transition" title="카톡·문자 링크 미리보기 확인">
-            <span>📱 미리보기 확인</span>
-          </button>
           <button class="mobile-menu-toggle" id="menuToggle" aria-label="메뉴 열기">
             <span></span>
             <span></span>
@@ -1001,38 +998,8 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. 최상단 대표 이미지 namecard.png & 링크 미리보기(OG Preview) 확인창 -->
+  <!-- 2. 최상단 대표 이미지 namecard.png 배너 -->
   <!-- ========================================================================= -->
-  <div id="ogPreviewBar" class="og-preview-drawer">
-    <div class="container-custom">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="text-center md:text-left">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C8A86B]/20 border border-[#C8A86B] text-[#E5C98D] text-xs font-extrabold mb-1.5">
-            <span>📱 카카오톡 · 갤럭시 문자 링크 미리보기 (`namecard.png` 적용 완료)</span>
-          </div>
-          <p class="text-xs sm:text-sm text-[#DCE7E1]">
-            최상단 메인 배너와 동일하게 <code class="text-[#E5C98D] font-bold">namecard.png</code>(1200×630)가 링크 공유 미리보기 대표 이미지로 표시됩니다. (총괄담당: <strong>나인수</strong> / 대표번호: <strong>1555-0031</strong> / 문자상담: <strong>010-7181-3469</strong>)
-          </p>
-        </div>
-
-        <!-- 실제 카카오톡/문자 공유 시 표시되는 OG 카드 미리보기 -->
-        <div class="og-card-mockup w-full sm:w-80 shrink-0">
-          <img src="namecard.png" alt="엘리프 시흥 더프라임 분양안내 미리보기 (나인수)" id="ogPreviewImg" onerror="renderElifNamecardFallback(this)">
-          <div class="p-3 bg-white">
-            <div class="text-[13px] font-extrabold text-gray-900 truncate">엘리프 시흥 더프라임 | 공식 분양홍보관 (나인수)</div>
-            <div class="text-[11px] text-gray-600 line-clamp-2 mt-0.5 leading-snug">시흥거모지구 입증된 가치, 새로운 프리미엄! 분양가상한제 적용 전용 84㎡, 신길온천역 더블역세권 & 전 세대 세대창고 제공</div>
-            <div class="text-[10px] text-emerald-800 font-bold mt-1">대표문의 1555-0031 • namecard.png</div>
-          </div>
-        </div>
-
-        <button type="button" onclick="toggleOgPreviewBar()" class="px-3.5 py-1.5 rounded-lg bg-[#041511] border border-white/15 text-xs text-[#98B4A6] hover:text-white self-center">
-          미리보기 창 접기 ▲
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 최상단 대표 이미지 namecard.png -->
   <section class="top-visual-banner" id="top-visual">
     <div class="top-visual-inner">
       <img src="namecard.png" alt="엘리프 시흥 더프라임 최상단 대표 이미지 (나인수)" class="main-top-img" id="topNamecardImg" onerror="renderElifNamecardFallback(this)">
@@ -1047,129 +1014,7 @@
       <div class="hero-badge">
         <span>ELIF SIHEUNG THE PRIME</span>
         <span>•</span>
-        <span>시흥거모 공공주택지구 B-5BL</span>
-      </div>
-      <h1 class="hero-title">
-        입증된 가치 — 새로운 프리미엄<br>
-        <span class="text-[#E5C98D]">엘리프 시흥 더프라임</span>
-      </h1>
-      <p class="hero-desc">
-        <span>시흥거모 공공주택지구 B-5BL · 4호선·수인분당선 신길온천역 더블역세권</span><br>
-        <span>분양가상한제 합리적 내 집 마련과 희소가치 높은 전용 84㎡ 프리미엄을 누리세요</span>
-      </p>
-
-      <div class="hero-info-group" style="grid-template-columns: repeat(2, 1fr); max-width: 680px;">
-        <div class="hero-info-card primary">
-          <span class="info-sub">합리적인 분양가 경쟁력</span>
-          <span class="info-main">분양가상한제 적용</span>
-        </div>
-        <div class="hero-info-card secondary">
-          <span class="info-sub">세대당 주차 1.5대 · 세대창고 제공</span>
-          <span class="info-main">전 세대 전용 84㎡</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 4. LOCATION & INFRASTRUCTURE (#location - PDF Page 3, 4, 5, 6) -->
-  <!-- ========================================================================= -->
-  <!-- 2. TOP BRAND VISUAL BANNER (PDF Page 1 S-Curve & Sketch Motif) -->
-  <!-- ========================================================================= -->
-  <section class="elif-cover-banner" id="top-visual">
-    <!-- PDF 표지의 시그니처 S-커브 아치 라인 SVG -->
-    <svg class="elif-s-curve-svg" viewBox="0 0 1440 420" preserveAspectRatio="none">
-      <path d="M -40,390 C 120,-80 540,-60 740,210 C 920,440 1260,390 1490,230" fill="none" stroke="#004B3B" stroke-width="5" stroke-opacity="0.32" />
-      <path d="M -40,402 C 125,-65 545,-45 745,222 C 925,452 1265,402 1490,242" fill="none" stroke="#C8A86B" stroke-width="2" stroke-opacity="0.65" />
-    </svg>
-
-    <div class="cover-inner">
-      <div class="space-y-3">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#004B3B] text-white text-xs font-bold tracking-wider uppercase">
-          <span>시흥거모 공공주택지구 B-5BL</span>
-          <span class="text-[#E5C98D]">|</span>
-          <span>입증된 가치 — 새로운 프리미엄</span>
-        </div>
-        <h2 class="font-serif-kr text-3xl sm:text-4xl lg:text-5xl font-black text-[#04221B] tracking-tight leading-tight">
-          엘리프 시흥 더프라임
-        </h2>
-        <p class="text-[#1A4338] text-sm sm:text-base font-medium leading-relaxed max-w-xl">
-          약 1만 8천 세대 거모·신길2지구의 미래가치와 4호선·수인분당선 신길온천역 더블역세권,<br class="hidden sm:inline">
-          분양가상한제로 누리는 100% 전용 84㎡ 프리미엄 랜드마크
-        </p>
-        <div class="pt-2 flex flex-wrap items-center gap-3 justify-center lg:justify-start">
-          <span class="px-3 py-1.5 rounded-lg bg-white/80 border border-[#004B3B]/20 text-[#004B3B] text-xs font-extrabold shadow-sm">
-            ✔ 분양가상한제 적용 단지
-          </span>
-          <span class="px-3 py-1.5 rounded-lg bg-white/80 border border-[#004B3B]/20 text-[#004B3B] text-xs font-extrabold shadow-sm">
-            ✔ 희소성 높은 전용 84㎡ A·B (338세대)
-          </span>
-          <span class="px-3 py-1.5 rounded-lg bg-white/80 border border-[#004B3B]/20 text-[#004B3B] text-xs font-extrabold shadow-sm">
-            ✔ 전 세대 지하1층 세대창고 제공
-          </span>
-        </div>
-      </div>
-
-      <!-- 우측 건축 일러스트 카드 (PDF 표지 건축 스케치 감성 구현) -->
-      <div class="bg-[#062820] text-white rounded-2xl p-5 border-2 border-[#C8A86B] shadow-2xl relative overflow-hidden">
-        <div class="flex items-center justify-between border-b border-white/15 pb-3 mb-4">
-          <div>
-            <span class="text-[11px] text-[#E5C98D] font-bold tracking-widest block">ARCHITECTURAL LANDMARK</span>
-            <h3 class="text-lg font-extrabold text-white">시흥거모지구 B-5BL 조감 스케치</h3>
-          </div>
-          <span class="text-2xl font-black tracking-widest text-[#E5C98D]">ELIF</span>
-        </div>
-        <!-- 아파트 스카이라인 & 고가철도/수변공원 SVG -->
-        <svg viewBox="0 0 460 190" class="w-full h-auto rounded-xl bg-gradient-to-b from-[#0A382D] to-[#041914] p-2 border border-white/10">
-          <!-- 배경 그리드 & 아치 -->
-          <path d="M 10,170 Q 150,10 310,110 T 450,90" fill="none" stroke="#C8A86B" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
-          <!-- 4개 동 타워 실루엣 (101동~104동) -->
-          <g fill="#EBF2EE" stroke="#004B3B" stroke-width="1.5">
-            <!-- 101동 -->
-            <rect x="55" y="55" width="42" height="105" rx="2" fill="#DCE7E1"/>
-            <rect x="62" y="48" width="28" height="8" fill="#C8A86B"/>
-            <!-- 102동 (메인 타워) -->
-            <rect x="115" y="28" width="52" height="132" rx="2" fill="#F5F9F7"/>
-            <rect x="123" y="20" width="36" height="9" fill="#C8A86B"/>
-            <!-- 103동 -->
-            <rect x="185" y="42" width="48" height="118" rx="2" fill="#EBF2EE"/>
-            <rect x="193" y="34" width="32" height="9" fill="#C8A86B"/>
-            <!-- 104동 -->
-            <rect x="250" y="60" width="42" height="100" rx="2" fill="#DCE7E1"/>
-            <rect x="257" y="53" width="28" height="8" fill="#C8A86B"/>
-          </g>
-          <!-- 창문 디테일 라인 -->
-          <g stroke="#062820" stroke-width="1" opacity="0.45">
-            <line x1="68" y1="65" x2="68" y2="155"/><line x1="82" y1="65" x2="82" y2="155"/>
-            <line x1="132" y1="38" x2="132" y2="155"/><line x1="148" y1="38" x2="148" y2="155"/>
-            <line x1="202" y1="52" x2="202" y2="155"/><line x1="216" y1="52" x2="216" y2="155"/>
-            <line x1="265" y1="68" x2="265" y2="155"/><line x1="278" y1="68" x2="278" y2="155"/>
-          </g>
-          <!-- 우측 광역 전철 모티브 (4호선·수인분당선) -->
-          <line x1="285" y1="142" x2="445" y2="118" stroke="#98B4A6" stroke-width="4"/>
-          <rect x="330" y="118" width="95" height="12" rx="4" transform="rotate(-8 330 118)" fill="#E5C98D"/>
-          <!-- 하단 조경 및 제기천 수변 -->
-          <path d="M 0,160 Q 120,152 240,162 T 460,156 L 460,190 L 0,190 Z" fill="#0B5241"/>
-          <text x="325" y="52" fill="#E5C98D" font-size="11" font-weight="bold">신길온천역 더블역세권</text>
-          <text x="325" y="68" fill="#DCE7E1" font-size="10">건폐율 14.28% 공원형 단지</text>
-        </svg>
-        <div class="mt-3 flex items-center justify-between text-xs text-[#A3BDB1]">
-          <span>대지위치 : 경기도 시흥시 거모지구 B-5BL</span>
-          <span class="text-[#E5C98D] font-bold">2029년 8월 입주예정</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 3. MAIN HERO SECTION (#hero) -->
-  <!-- ========================================================================= -->
-  <section id="hero">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span>ELIF SIHEUNG THE PRIME</span>
-        <span>•</span>
-        <span>시흥거모지구 B-5BL 공식 분양안내</span>
+        <span>시흥거모 공공주택지구 B-5BL 공식 분양안내</span>
       </div>
       <h1 class="hero-title">
         시흥거모의 중심에서 만나는 새로운 프리미엄<br>
@@ -2813,12 +2658,6 @@
       imgEl.src = generateElifPopupDataUrl();
     }
 
-    function toggleOgPreviewBar() {
-      const bar = document.getElementById('ogPreviewBar');
-      if (!bar) return;
-      bar.style.display = (bar.style.display === 'none') ? 'block' : 'none';
-    }
-
     // Custom Modal Notification Function (No alert())
     function showNoticeModal(title, message) {
       const modal = document.getElementById('customNoticeModal');
@@ -2943,14 +2782,11 @@
       openPopup();
 
       const topImg = document.getElementById('topNamecardImg');
-      const ogImg = document.getElementById('ogPreviewImg');
       const popImg = document.getElementById('popupModalImg');
 
-      [topImg, ogImg].forEach(img => {
-        if (img && img.complete && img.naturalWidth === 0) {
-          renderElifNamecardFallback(img);
-        }
-      });
+      if (topImg && topImg.complete && topImg.naturalWidth === 0) {
+        renderElifNamecardFallback(topImg);
+      }
 
       if (popImg && popImg.complete && popImg.naturalWidth === 0) {
         renderElifPopupFallback(popImg);
