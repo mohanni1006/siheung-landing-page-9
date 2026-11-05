@@ -41,6 +41,676 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- 이미지 onerror 즉시 대응을 위한 사전 정의 스크립트 -->
+  <script>
+    let cachedNamecardDataUrl = null;
+    let cachedPopupDataUrl = null;
+
+    function generateElifNamecardDataUrl() {
+      if (cachedNamecardDataUrl) return cachedNamecardDataUrl;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 630;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 1200, 630);
+      bgGrad.addColorStop(0, '#EEF5F1');
+      bgGrad.addColorStop(0.65, '#DCE7E1');
+      bgGrad.addColorStop(1, '#C7DBD0');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1200, 630);
+
+      ctx.fillStyle = '#042019';
+      ctx.fillRect(0, 515, 1200, 115);
+      ctx.fillStyle = '#C8A86B';
+      ctx.fillRect(0, 512, 1200, 4);
+
+      ctx.fillStyle = 'rgba(0, 75, 59, 0.12)';
+      const bgTowers = [
+        [45, 360, 38, 152], [92, 340, 45, 172], [440, 390, 32, 122],
+        [480, 375, 38, 137], [525, 400, 30, 112], [565, 385, 35, 127]
+      ];
+      bgTowers.forEach(([x, y, w, h]) => ctx.fillRect(x, y, w, h));
+
+      const mainTowers = [
+        { x: 115, y: 270, w: 68, h: 242, roof: '#004B3B', body: '#F7FAF8', side: '#C8DBD1' },
+        { x: 215, y: 185, w: 86, h: 327, roof: '#004B3B', body: '#FFFFFF', side: '#B8D0C4' },
+        { x: 332, y: 235, w: 78, h: 277, roof: '#004B3B', body: '#F7FAF8', side: '#C8DBD1' },
+        { x: 422, y: 285, w: 62, h: 227, roof: '#004B3B', body: '#EEF5F1', side: '#B8D0C4' }
+      ];
+
+      mainTowers.forEach(t => {
+        ctx.fillStyle = t.side;
+        ctx.fillRect(t.x - 14, t.y + 8, 14, t.h - 8);
+        ctx.fillStyle = t.body;
+        ctx.fillRect(t.x, t.y, t.w, t.h);
+        ctx.strokeStyle = '#004B3B';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(t.x, t.y, t.w, t.h);
+        ctx.fillStyle = t.roof;
+        ctx.fillRect(t.x + 6, t.y - 10, t.w - 12, 10);
+        ctx.fillStyle = 'rgba(0, 75, 59, 0.25)';
+        for (let wy = t.y + 18; wy < t.y + t.h - 20; wy += 16) {
+          ctx.fillRect(t.x + 12, wy, 14, 9);
+          ctx.fillRect(t.x + 34, wy, 14, 9);
+          if (t.w > 70) ctx.fillRect(t.x + 56, wy, 14, 9);
+        }
+      });
+
+      ctx.strokeStyle = '#6E9685';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(470, 495);
+      ctx.lineTo(830, 435);
+      ctx.stroke();
+
+      ctx.fillStyle = '#0B5241';
+      ctx.beginPath();
+      ctx.moveTo(0, 512);
+      ctx.quadraticCurveTo(260, 475, 560, 512);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(18, 512);
+      ctx.lineTo(18, 210);
+      ctx.bezierCurveTo(60, -25, 520, -20, 650, 225);
+      ctx.bezierCurveTo(760, 430, 1030, 435, 1190, 320);
+      ctx.strokeStyle = '#004B3B';
+      ctx.lineWidth = 7;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(26, 512);
+      ctx.lineTo(26, 215);
+      ctx.bezierCurveTo(68, -12, 525, -8, 656, 232);
+      ctx.bezierCurveTo(766, 438, 1035, 442, 1192, 328);
+      ctx.strokeStyle = '#C8A86B';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#063328';
+      ctx.font = '600 23px "Pretendard", sans-serif';
+      ctx.fillText('입 증 된   가 치  —  새 로 운   프 리 미 엄', 1140, 58);
+
+      ctx.fillStyle = '#004B3B';
+      ctx.beginPath();
+      ctx.roundRect(940, 145, 200, 38, 19);
+      ctx.fill();
+      ctx.fillStyle = '#E5C98D';
+      ctx.font = '800 17px "Pretendard", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('시흥거모지구 B-5BL', 1040, 170);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#04221B';
+      ctx.font = '800 44px "Pretendard", sans-serif';
+      ctx.fillText('엘리프 시흥 더프라임', 1140, 238);
+
+      ctx.fillStyle = '#004B3B';
+      ctx.font = '900 74px "Pretendard", sans-serif';
+      ctx.fillText('E L I F', 1140, 322);
+
+      const badges = [
+        '✔ 분양가상한제 합리적 분양가',
+        '✔ 4호선·수인분당선 신길온천역 도보권',
+        '✔ 100% 전용 84㎡ · 전 세대 세대창고'
+      ];
+      badges.forEach((text, idx) => {
+        const by = 352 + idx * 36;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(810, by, 330, 30, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 75, 59, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#04221B';
+        ctx.font = '700 15px "Pretendard", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(text, 1126, by + 20);
+      });
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#E5C98D';
+      ctx.font = '800 16px "Pretendard", sans-serif';
+      ctx.fillText('ELIF SIHEUNG THE PRIME OFFICIAL LOUNGE', 48, 554);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 28px "Pretendard", sans-serif';
+      ctx.fillText('엘리프 시흥 더프라임 공식 분양홍보관', 48, 592);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#DCE7E1';
+      ctx.font = '700 17px "Pretendard", sans-serif';
+      ctx.fillText('총괄담당 나인수  |  문자상담 010-7181-3469', 1152, 552);
+
+      ctx.fillStyle = '#E5C98D';
+      ctx.font = '900 34px "Pretendard", sans-serif';
+      ctx.fillText('대표문의 ☎ 1555-0031', 1152, 596);
+
+      cachedNamecardDataUrl = canvas.toDataURL('image/png');
+      return cachedNamecardDataUrl;
+    }
+
+    function renderElifNamecardFallback(imgEl) {
+      if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+      imgEl.src = generateElifNamecardDataUrl();
+    }
+
+    function generateElifPopupDataUrl() {
+      if (cachedPopupDataUrl) return cachedPopupDataUrl;
+      const canvas = document.createElement('canvas');
+      canvas.width = 800;
+      canvas.height = 1000;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, 1000);
+      bgGrad.addColorStop(0, '#FDFBF4');
+      bgGrad.addColorStop(1, '#F5EFE0');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 800, 1000);
+
+      ctx.strokeStyle = '#B89758';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(45, 62);
+      ctx.lineTo(175, 62);
+      ctx.moveTo(625, 62);
+      ctx.lineTo(755, 62);
+      ctx.stroke();
+
+      const badgeGrad = ctx.createLinearGradient(190, 28, 610, 96);
+      badgeGrad.addColorStop(0, '#A81309');
+      badgeGrad.addColorStop(0.5, '#8A0B04');
+      badgeGrad.addColorStop(1, '#6E0702');
+      ctx.fillStyle = badgeGrad;
+      ctx.beginPath();
+      ctx.roundRect(190, 28, 420, 68, 34);
+      ctx.fill();
+      ctx.strokeStyle = '#C8A86B';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 38px "Pretendard", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('분양가 상한제 적용!', 400, 75);
+
+      ctx.fillStyle = '#06152D';
+      ctx.font = '900 78px "Pretendard", sans-serif';
+      ctx.fillText('수도권 역세권', 400, 182);
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#06152D';
+      ctx.font = '900 138px "Pretendard", sans-serif';
+      ctx.fillText('34평', 62, 326);
+
+      const redGrad = ctx.createLinearGradient(365, 210, 735, 340);
+      redGrad.addColorStop(0, '#E11D11');
+      redGrad.addColorStop(1, '#A30804');
+      ctx.fillStyle = redGrad;
+      ctx.font = '900 144px "Pretendard", sans-serif';
+      ctx.fillText('5억대', 370, 328);
+
+      ctx.strokeStyle = '#C8A24B';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(190, 355);
+      ctx.quadraticCurveTo(450, 336, 680, 356);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#B89758';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(60, 376);
+      ctx.lineTo(740, 376);
+      ctx.moveTo(60, 452);
+      ctx.lineTo(740, 452);
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#06152D';
+      ctx.font = '900 50px "Pretendard", sans-serif';
+      ctx.fillText('4호선/수인분당선 더블 역세권', 400, 432);
+
+      ctx.fillStyle = '#C81409';
+      ctx.font = 'italic 900 64px "Pretendard", sans-serif';
+      ctx.fillText('내집 마련 마지막 기회!', 400, 528);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.roundRect(42, 570, 716, 396, 26);
+      ctx.fill();
+      ctx.strokeStyle = '#C5A253';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#D9BE82';
+      ctx.fillRect(195, 628, 430, 175);
+      ctx.fillStyle = '#FAF5EC';
+      ctx.fillRect(168, 662, 432, 178);
+      ctx.strokeStyle = '#D4B886';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(168, 662, 432, 178);
+
+      ctx.fillStyle = '#7C5836';
+      ctx.font = '700 20px "Pretendard", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('商品券 백화점상품권', 190, 698);
+
+      ctx.fillStyle = '#6E4F32';
+      ctx.font = '800 48px "Pretendard", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('100000', 575, 720);
+
+      ctx.fillStyle = '#222';
+      ctx.font = '700 24px "Pretendard", sans-serif';
+      ctx.fillText('❀ 신세계상품권', 670, 612);
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#06152D';
+      ctx.font = '900 68px "Pretendard", sans-serif';
+      ctx.fillText('계약시 ', 225, 938);
+      ctx.fillStyle = '#C81409';
+      ctx.fillText('상품권 증정!', 515, 938);
+
+      cachedPopupDataUrl = canvas.toDataURL('image/png');
+      return cachedPopupDataUrl;
+    }
+
+    function renderElifPopupFallback(imgEl) {
+      if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+      imgEl.src = generateElifPopupDataUrl();
+    }
+
+    function renderElifMainPerspectiveFallback(imgEl) {
+      if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280;
+      canvas.height = 720;
+      const ctx = canvas.getContext('2d');
+
+      const sky = ctx.createLinearGradient(0, 0, 0, 520);
+      sky.addColorStop(0, '#5FA2D6');
+      sky.addColorStop(0.55, '#B7DAF2');
+      sky.addColorStop(1, '#E6F2FA');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, 1280, 720);
+
+      ctx.fillStyle = '#86A899';
+      ctx.beginPath();
+      ctx.moveTo(0, 470);
+      ctx.quadraticCurveTo(320, 420, 680, 465);
+      ctx.quadraticCurveTo(980, 430, 1280, 465);
+      ctx.lineTo(1280, 540);
+      ctx.lineTo(0, 540);
+      ctx.fill();
+
+      ctx.fillStyle = '#7C8288';
+      ctx.fillRect(0, 515, 1280, 205);
+
+      ctx.fillStyle = '#2E5E36';
+      ctx.beginPath();
+      ctx.moveTo(220, 520);
+      ctx.lineTo(1060, 520);
+      ctx.lineTo(940, 610);
+      ctx.lineTo(360, 610);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#ECEFF1';
+      ctx.fillRect(410, 195, 130, 355);
+      ctx.fillStyle = '#CBD3D8';
+      ctx.fillRect(540, 205, 38, 345);
+      ctx.fillStyle = '#004B3B';
+      ctx.fillRect(410, 195, 22, 355);
+      ctx.fillRect(410, 195, 130, 14);
+      ctx.fillStyle = '#4B6375';
+      for (let y = 222; y < 530; y += 16) {
+        for (let x = 440; x < 530; x += 22) {
+          ctx.fillRect(x, y, 15, 10);
+        }
+      }
+
+      ctx.fillStyle = '#F2F5F7';
+      ctx.fillRect(665, 115, 148, 445);
+      ctx.fillStyle = '#004B3B';
+      ctx.fillRect(790, 115, 28, 445);
+      ctx.fillRect(705, 115, 108, 18);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 18px "Pretendard", sans-serif';
+      ctx.fillText('ELIF', 745, 130);
+      ctx.fillStyle = '#4B6375';
+      for (let y = 148; y < 540; y += 16) {
+        for (let x = 678; x < 782; x += 22) {
+          ctx.fillRect(x, y, 16, 10);
+        }
+      }
+
+      ctx.fillStyle = '#DDE3E6';
+      ctx.fillRect(960, 515, 115, 42);
+      ctx.fillStyle = '#004B3B';
+      ctx.fillRect(960, 515, 115, 9);
+
+      ctx.fillStyle = 'rgba(4, 21, 17, 0.85)';
+      ctx.fillRect(0, 645, 1280, 75);
+      ctx.fillStyle = '#E5C98D';
+      ctx.font = '900 26px "Pretendard", sans-serif';
+      ctx.fillText('엘리프 시흥 더프라임 (ELIF SIHEUNG THE PRIME) 단지 투시도', 40, 692);
+
+      imgEl.src = canvas.toDataURL('image/png');
+    }
+
+    function handleInfraImgError(imgEl) {
+      if (!imgEl) return;
+      if (!imgEl.dataset.triedEncoded) {
+        imgEl.dataset.triedEncoded = 'true';
+        imgEl.src = encodeURI('인프라.jpg');
+        return;
+      }
+      if (imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280;
+      canvas.height = 670;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#1B2621';
+      ctx.fillRect(0, 0, 750, 670);
+      ctx.fillStyle = '#DCE6E1';
+      ctx.fillRect(750, 0, 530, 670);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.arc(380, 355, 145, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(380, 355, 290, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = 'rgba(20, 26, 24, 0.92)';
+      ctx.strokeStyle = '#98B4A6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(335, 68, 405, 150, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 20px "Pretendard", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('생활 인프라 접근성 : 차량 약 20분 內 (6km 內)', 537, 148);
+      ctx.fillStyle = '#EF4444';
+      ctx.fillText('SITE (당 사업지)', 415, 195);
+      ctx.fillStyle = '#38BDF8';
+      ctx.fillText('생활 인프라', 665, 195);
+
+      ctx.fillStyle = '#DC2626';
+      ctx.beginPath();
+      ctx.roundRect(380, 305, 78, 30, 15);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 16px "Pretendard", sans-serif';
+      ctx.fillText('SITE', 419, 326);
+
+      const pins = [
+        { x: 205, y: 155, label: '신세계 아울렛', color: '#9333EA' },
+        { x: 205, y: 315, label: '시화병원', color: '#EC4899' },
+        { x: 430, y: 455, label: '이마트 트레이더스', color: '#EAB308' },
+        { x: 555, y: 478, label: '경기도 미술관', color: '#EAB308' },
+        { x: 565, y: 515, label: '고려대병원', color: '#EC4899' },
+        { x: 655, y: 530, label: '롯데백화점', color: '#9333EA' }
+      ];
+      pins.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.roundRect(p.x - 58, p.y - 14, 116, 26, 13);
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '800 13px "Pretendard", sans-serif';
+        ctx.fillText(p.label, p.x, p.y + 4);
+      });
+
+      const groups = [
+        { title: '백화점 · 아울렛', y: 20, c1: '롯데 백화점', c2: '신세계 아울렛' },
+        { title: '생활 · 여가 시설', y: 235, c1: '이마트 트레이더스', c2: '경기도 미술관' },
+        { title: '종합 병원', y: 450, c1: '시화 병원', c2: '고려대 병원' }
+      ];
+      groups.forEach(g => {
+        ctx.fillStyle = '#0D4A3B';
+        ctx.beginPath();
+        ctx.roundRect(775, g.y, 185, 34, 17);
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '800 16px "Pretendard", sans-serif';
+        ctx.fillText(g.title, 867, g.y + 23);
+
+        [ { x: 785, name: g.c1 }, { x: 1030, name: g.c2 } ].forEach(card => {
+          ctx.fillStyle = '#335C4E';
+          ctx.fillRect(card.x, g.y + 44, 225, 155);
+          ctx.fillStyle = 'rgba(0,0,0,0.72)';
+          ctx.fillRect(card.x, g.y + 162, 165, 32);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '800 15px "Pretendard", sans-serif';
+          ctx.fillText(card.name, card.x + 82, g.y + 183);
+        });
+      });
+
+      imgEl.src = canvas.toDataURL('image/png');
+    }
+
+    function handleCommunityImgError(imgEl) {
+      if (!imgEl) return;
+      if (!imgEl.dataset.triedEncoded) {
+        imgEl.dataset.triedEncoded = 'true';
+        imgEl.src = encodeURI('커뮤니티 시설.jpg');
+        return;
+      }
+      if (imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280;
+      canvas.height = 630;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 1280, 630);
+
+      ctx.fillStyle = '#004B3B';
+      ctx.beginPath();
+      ctx.roundRect(35, 25, 245, 38, 19);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '800 19px "Pretendard", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Key map (101동~104동)', 157, 50);
+
+      ctx.strokeStyle = '#6B7280';
+      ctx.strokeRect(45, 78, 225, 195);
+      ctx.fillStyle = '#374151';
+      ctx.font = '800 15px "Pretendard", sans-serif';
+      ctx.fillText('101동 / 102동 / 103동 / 104동', 157, 175);
+
+      ctx.fillStyle = '#004B3B';
+      ctx.beginPath();
+      ctx.roundRect(435, 25, 215, 36, 10);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('A  주민공동시설', 542, 49);
+
+      ctx.fillStyle = '#E5E7EB';
+      ctx.strokeStyle = '#1F2937';
+      ctx.lineWidth = 3;
+      ctx.fillRect(455, 82, 760, 220);
+      ctx.strokeRect(455, 82, 760, 220);
+
+      const aRooms = [
+        { x: 470, y: 98, w: 120, h: 185, name: '주민회의실' },
+        { x: 600, y: 98, w: 145, h: 185, name: '썬큰 (SUNKEN)' },
+        { x: 755, y: 98, w: 265, h: 185, name: '피트니스 · 탈의실(남/여)' },
+        { x: 1030, y: 98, w: 170, h: 185, name: '골프연습장 · GX룸' }
+      ];
+      aRooms.forEach(r => {
+        ctx.fillStyle = '#D1FAE5';
+        ctx.fillRect(r.x, r.y, r.w, r.h);
+        ctx.strokeStyle = '#047857';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(r.x, r.y, r.w, r.h);
+        ctx.fillStyle = '#064E3B';
+        ctx.font = '800 15px "Pretendard", sans-serif';
+        ctx.fillText(r.name, r.x + r.w / 2, r.y + r.h / 2 + 5);
+      });
+
+      ctx.fillStyle = '#004B3B';
+      ctx.beginPath();
+      ctx.roundRect(35, 345, 215, 36, 10);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('B  어린이집', 142, 369);
+
+      ctx.fillStyle = '#FEF3C7';
+      ctx.fillRect(35, 398, 430, 195);
+      ctx.strokeStyle = '#B45309';
+      ctx.strokeRect(35, 398, 430, 195);
+      ctx.fillStyle = '#78350F';
+      ctx.font = '800 18px "Pretendard", sans-serif';
+      ctx.fillText('보육실(4개소) · 유희실 · 교사실', 250, 502);
+
+      ctx.fillStyle = '#004B3B';
+      ctx.beginPath();
+      ctx.roundRect(515, 345, 215, 36, 10);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('C  경로당', 622, 369);
+
+      ctx.fillStyle = '#E0E7FF';
+      ctx.fillRect(515, 398, 430, 195);
+      ctx.strokeStyle = '#3730A3';
+      ctx.strokeRect(515, 398, 430, 195);
+      ctx.fillStyle = '#1E1B4B';
+      ctx.fillText('할머니방 · 할아버지방 · 취미실', 730, 502);
+
+      imgEl.src = canvas.toDataURL('image/png');
+    }
+
+    function handleUnitImgError(imgEl, unitType) {
+      if (!imgEl) return;
+      if (!imgEl.dataset.triedLower) {
+        imgEl.dataset.triedLower = 'true';
+        imgEl.src = unitType === '84A' ? '84a.png' : '84b.png';
+        return;
+      }
+      if (imgEl.dataset.fallbackApplied === 'true') return;
+      imgEl.dataset.fallbackApplied = 'true';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 700;
+      canvas.height = 610;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#D7E4E0';
+      ctx.fillRect(0, 0, 700, 610);
+
+      ctx.strokeStyle = '#6E7A76';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(32, 78);
+      ctx.lineTo(18, 78);
+      ctx.lineTo(18, 22);
+      ctx.lineTo(74, 22);
+      ctx.lineTo(74, 36);
+      ctx.stroke();
+
+      ctx.fillStyle = '#38423F';
+      ctx.font = '900 36px "Pretendard", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('확장 옵션형 (' + unitType + ')', 45, 84);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(26, 138, 648, 444);
+
+      ctx.fillStyle = '#F3F1EC';
+      ctx.strokeStyle = '#333333';
+      ctx.lineWidth = 8;
+
+      if (unitType === '84A') {
+        ctx.fillRect(46, 265, 220, 290);
+        ctx.strokeRect(46, 265, 220, 290);
+        ctx.fillRect(240, 158, 412, 397);
+        ctx.strokeRect(240, 158, 412, 397);
+
+        const rooms84A = [
+          { x: 52, y: 300, w: 62, h: 100, t: '공용욕실', bg: '#EAE6DF' },
+          { x: 118, y: 272, w: 62, h: 78, t: '현관', bg: '#D6D3CD' },
+          { x: 52, y: 408, w: 102, h: 142, t: '침실3', bg: '#E6DFD5' },
+          { x: 158, y: 408, w: 102, h: 142, t: '침실2', bg: '#E6DFD5' },
+          { x: 265, y: 335, w: 220, h: 215, t: '거실', bg: '#EFECE6' },
+          { x: 252, y: 170, w: 225, h: 145, t: '주방/식당', bg: '#EAE6DF' },
+          { x: 482, y: 170, w: 82, h: 75, t: '다용도실', bg: '#D6D3CD' },
+          { x: 495, y: 250, w: 72, h: 85, t: '부부욕실', bg: '#EAE6DF' },
+          { x: 570, y: 170, w: 74, h: 170, t: '드레스룸', bg: '#E6DFD5' },
+          { x: 490, y: 345, w: 154, h: 140, t: '침실1', bg: '#E6DFD5' },
+          { x: 490, y: 490, w: 154, h: 60, t: '발코니', bg: '#D6D3CD' }
+        ];
+        rooms84A.forEach(r => {
+          ctx.fillStyle = r.bg;
+          ctx.fillRect(r.x, r.y, r.w, r.h);
+          ctx.strokeStyle = '#4B5563';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(r.x, r.y, r.w, r.h);
+          ctx.fillStyle = '#1F2937';
+          ctx.font = '800 18px "Pretendard", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(r.t, r.x + r.w / 2, r.y + r.h / 2 + 6);
+        });
+      } else {
+        ctx.fillRect(46, 158, 412, 397);
+        ctx.strokeRect(46, 158, 412, 397);
+        ctx.fillRect(434, 265, 220, 290);
+        ctx.strokeRect(434, 265, 220, 290);
+
+        const rooms84B = [
+          { x: 54, y: 170, w: 74, h: 170, t: '드레스룸', bg: '#E6DFD5' },
+          { x: 132, y: 170, w: 82, h: 75, t: '다용도실', bg: '#D6D3CD' },
+          { x: 132, y: 250, w: 72, h: 85, t: '부부욕실', bg: '#EAE6DF' },
+          { x: 54, y: 345, w: 154, h: 140, t: '침실1', bg: '#E6DFD5' },
+          { x: 54, y: 490, w: 154, h: 60, t: '발코니', bg: '#D6D3CD' },
+          { x: 220, y: 170, w: 225, h: 145, t: '주방/식당', bg: '#EAE6DF' },
+          { x: 214, y: 335, w: 220, h: 215, t: '거실', bg: '#EFECE6' },
+          { x: 518, y: 272, w: 62, h: 78, t: '현관', bg: '#D6D3CD' },
+          { x: 584, y: 300, w: 62, h: 100, t: '공용욕실', bg: '#EAE6DF' },
+          { x: 438, y: 408, w: 102, h: 142, t: '침실2', bg: '#E6DFD5' },
+          { x: 544, y: 408, w: 102, h: 142, t: '침실3', bg: '#E6DFD5' }
+        ];
+        rooms84B.forEach(r => {
+          ctx.fillStyle = r.bg;
+          ctx.fillRect(r.x, r.y, r.w, r.h);
+          ctx.strokeStyle = '#4B5563';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(r.x, r.y, r.w, r.h);
+          ctx.fillStyle = '#1F2937';
+          ctx.font = '800 18px "Pretendard", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(r.t, r.x + r.w / 2, r.y + r.h / 2 + 6);
+        });
+      }
+
+      imgEl.src = canvas.toDataURL('image/png');
+    }
+  </script>
+
   <style>
     /* -----------------------------------------------------------
        1. ELIF Brand Color Tokens & Base Reset
@@ -1022,17 +1692,17 @@
       </h1>
       <p class="hero-desc">
         <span>4호선·수인분당선 신길온천역 더블역세권과 약 1만 8천 세대 거모·신길2지구의 비전</span><br>
-        <span>분양가상한제의 합리적 가격과 희소성 높은 100% 전용 84㎡ 명품 단지를 선점하세요</span>
+        <span>분양가상한제 적용 수도권 역세권 34평형 5억대 합리적 내 집 마련 기회를 선점하세요</span>
       </p>
 
       <div class="hero-info-group">
         <div class="hero-info-card primary">
-          <span class="info-sub">합리적인 내 집 마련 기회</span>
-          <span class="info-main">분양가상한제 적용</span>
+          <span class="info-sub">분양가상한제 적용 단지</span>
+          <span class="info-main">34평형 5억대</span>
         </div>
         <div class="hero-info-card secondary">
-          <span class="info-sub">거모지구 내 높은 희소가치</span>
-          <span class="info-main">100% 전용 84㎡</span>
+          <span class="info-sub">4호선 · 수인분당선</span>
+          <span class="info-main">더블 역세권</span>
         </div>
         <div class="hero-info-card primary">
           <span class="info-sub">전 세대 지하1층 기본 제공</span>
@@ -1043,14 +1713,66 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 4. LOCATION & INFRASTRUCTURE (#location - PDF Page 3 & Page 5) -->
+  <!-- 3-2. 메인 투시도 배너 (main.jpg 배치) -->
+  <!-- ========================================================================= -->
+  <section class="top-visual-banner" id="main-perspective">
+    <div class="top-visual-inner relative group cursor-pointer" onclick="openImageLightbox(document.getElementById('heroMainImg').src, '엘리프 시흥 더프라임 메인 투시도')">
+      <img src="main.jpg" alt="엘리프 시흥 더프라임 메인 투시도" class="main-top-img" id="heroMainImg" onerror="renderElifMainPerspectiveFallback(this)">
+      <div class="absolute bottom-4 right-4 bg-[#041511]/85 border border-[#C8A86B]/70 text-[#E5C98D] text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-1.5 shadow-lg">
+        <span>🔍 이미지를 클릭하면 크게 보실 수 있습니다</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. LOCATION & INFRASTRUCTURE (#location - 인프라.jpg 핵심 배치) -->
   <!-- ========================================================================= -->
   <section id="location" class="section-elif">
     <div class="container-custom">
       <div class="section-title-wrap">
-        <span class="sub-head">02. LOCATION & ENVIRONMENT</span>
-        <h2 class="main-head">교통·생활·자연·비전을 모두 품은 시흥거모 핵심 입지</h2>
-        <p class="desc-head">원하시는 테마 탭을 클릭하시면 엘리프 시흥 더프라임의 4대 입지 프리미엄을 확인하실 수 있습니다</p>
+        <span class="sub-head">02. LOCATION & INFRASTRUCTURE</span>
+        <h2 class="main-head">차량 20분(6km) 내 완성된 생활 인프라와 더블역세권</h2>
+        <p class="desc-head">시흥·안산의 풍부한 백화점·아울렛·대형마트·종합병원 인프라는 물론 4호선·수인분당선 역세권까지 한 번에 누립니다</p>
+      </div>
+
+      <!-- [핵심 배치 1] 업로드된 인프라.jpg 대형 쇼케이스 -->
+      <div class="mb-10 bg-[#07221B] rounded-2xl p-4 sm:p-6 border-2 border-[#C8A86B]/60 shadow-2xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="px-3 py-1 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black">INFRASTRUCTURE MAP</span>
+            <h3 class="text-lg sm:text-xl font-extrabold text-white">반경 3km · 6km (차량 약 20분 內) 핵심 생활 인프라 접근성</h3>
+          </div>
+          <span class="text-xs text-[#E5C98D] font-bold">🔍 이미지 클릭 시 확대 보기</span>
+        </div>
+
+        <div class="rounded-xl overflow-hidden border border-white/15 bg-[#041712] cursor-pointer" onclick="openImageLightbox(document.getElementById('infraMainImg').src, '엘리프 시흥 더프라임 생활 인프라 접근성 (인프라.jpg)')">
+          <img src="인프라.jpg" alt="엘리프 시흥 더프라임 생활 인프라 접근성 - 차량 약 20분 내 롯데백화점 신세계아울렛 이마트트레이더스 경기도미술관 시화병원 고려대병원" class="w-full h-auto block" id="infraMainImg" onerror="handleInfraImgError(this)">
+        </div>
+
+        <!-- 인프라.jpg 하단 3대 카테고리 요약 카드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+          <div class="bg-[#041712] p-4 rounded-xl border border-[#C8A86B]/40 flex items-start gap-3.5">
+            <span class="px-2.5 py-1 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold shrink-0 mt-0.5">백화점·아울렛</span>
+            <div>
+              <h4 class="text-sm font-extrabold text-white">롯데백화점 · 신세계 아울렛</h4>
+              <p class="text-xs text-[#98B4A6] mt-0.5">차량 약 20분 내(6km 내) 대형 쇼핑·문화 라이프</p>
+            </div>
+          </div>
+          <div class="bg-[#041712] p-4 rounded-xl border border-[#C8A86B]/40 flex items-start gap-3.5">
+            <span class="px-2.5 py-1 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold shrink-0 mt-0.5">생활·여가시설</span>
+            <div>
+              <h4 class="text-sm font-extrabold text-white">이마트 트레이더스 · 경기도 미술관</h4>
+              <p class="text-xs text-[#98B4A6] mt-0.5">반경 3km~6km 인접 대형 마트 및 문화·여가 인프라</p>
+            </div>
+          </div>
+          <div class="bg-[#041712] p-4 rounded-xl border border-[#C8A86B]/40 flex items-start gap-3.5">
+            <span class="px-2.5 py-1 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold shrink-0 mt-0.5">종합 병원</span>
+            <div>
+              <h4 class="text-sm font-extrabold text-white">시화병원 · 고려대 안산병원</h4>
+              <p class="text-xs text-[#98B4A6] mt-0.5">권역 내 대표 대형 종합병원을 가까이 누리는 안심 의료권</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 4대 입지 프리미엄 인터랙티브 슬라이더 -->
@@ -1291,7 +2013,7 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 5. PROJECT OVERVIEW (#overview - PDF Page 2) -->
+  <!-- 5. PROJECT OVERVIEW (#overview - main.jpg 조감도/투시도 + 사업개요표) -->
   <!-- ========================================================================= -->
   <section id="overview" class="section-elif-alt">
     <div class="container-custom">
@@ -1299,6 +2021,15 @@
         <span class="sub-head">01. PROJECT OVERVIEW</span>
         <h2 class="main-head">엘리프 시흥 더프라임 사업개요</h2>
         <p class="desc-head">시흥거모지구 B-5BL | 세대당 1.5대 넉넉한 주차공간과 100% 전용 84㎡ 명품 단지</p>
+      </div>
+
+      <!-- 사업개요 대표 투시도 프레임 (main.jpg) -->
+      <div class="mb-8 rounded-2xl overflow-hidden border-2 border-[#C8A86B]/50 shadow-2xl bg-[#041712] relative cursor-pointer" onclick="openImageLightbox(document.getElementById('overviewMainImg').src, '엘리프 시흥 더프라임 단지 투시도')">
+        <img src="main.jpg" alt="엘리프 시흥 더프라임 사업개요 투시도" class="w-full h-auto block max-h-[540px] object-cover" id="overviewMainImg" onerror="renderElifMainPerspectiveFallback(this)">
+        <div class="bg-[#041712]/95 px-5 py-3 border-t border-[#C8A86B]/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="text-[#E5C98D] font-extrabold">ELIF SIHEUNG THE PRIME | 경기도 시흥시 거모지구 B-5BL (총 338세대)</span>
+          <span class="text-[#98B4A6]">※ 클릭 시 투시도 원본 확대</span>
+        </div>
       </div>
 
       <!-- 사업개요 테이블 (PDF Page 2 데이터 100% 반영) -->
@@ -1463,8 +2194,42 @@
           </div>
           <h3 class="text-xl font-extrabold text-white mb-2">다채로운 웰빙 커뮤니티</h3>
           <p class="text-sm text-[#C2D6CC] leading-relaxed">
-            피트니스 센터, 골프연습장, GX룸, 탈의실·샤워실, 선큰(SUNKEN), 맘스스테이션, 어린이집, 경로당 등 고품격 커뮤니티를 제공합니다.
+            피트니스 센터, 골프연습장, GX룸, 탈의실·샤워실, 썬큰(SUNKEN), 맘스스테이션, 어린이집, 경로당 등 고품격 커뮤니티를 제공합니다.
           </p>
+        </div>
+      </div>
+
+      <!-- 특별 혜택 배너 (popup.png 본문 내 배치 & 전화/상담 바로가기) -->
+      <div class="mt-12 bg-gradient-to-r from-[#06241C] via-[#093227] to-[#051C16] rounded-2xl p-6 sm:p-8 border-2 border-[#C8A86B] shadow-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-5">
+            <div class="rounded-xl overflow-hidden border-2 border-[#C8A86B] shadow-xl max-w-[380px] mx-auto cursor-pointer" onclick="openImageLightbox(document.getElementById('inlinePopupImg').src, '엘리프 시흥 더프라임 특별 분양 혜택 안내')">
+              <img src="popup.png" alt="분양가 상한제 적용 수도권 역세권 34평 5억대 계약시 신세계상품권 증정" class="w-full h-auto block" id="inlinePopupImg" onerror="renderElifPopupFallback(this)">
+            </div>
+          </div>
+          <div class="lg:col-span-7 space-y-4 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black">
+              <span>SPECIAL BENEFIT</span>
+              <span>•</span>
+              <span>분양가 상한제 적용 단지</span>
+            </div>
+            <h3 class="text-2xl sm:text-4xl font-black text-white leading-tight">
+              수도권 더블역세권 <span class="text-[#E5C98D]">34평형 5억대!</span><br>
+              내 집 마련의 마지막 기회
+            </h3>
+            <p class="text-sm sm:text-base text-[#DCE7E1] leading-relaxed">
+              4호선 · 수인분당선 신길온천역 더블역세권 프리미엄과 분양가상한제가 만났습니다.<br>
+              사전 방문예약 및 <strong class="text-[#E5C98D]">계약 시 백화점 상품권(신세계상품권) 증정 혜택</strong>까지 지금 바로 상담받아보세요.
+            </p>
+            <div class="pt-2 flex flex-wrap justify-center lg:justify-start gap-3">
+              <a href="tel:1555-0031" class="px-6 py-3.5 rounded-full bg-[#C8A86B] text-[#041511] font-black text-base hover:bg-[#E5C98D] transition shadow-lg">
+                📞 대표번호 전화상담 1555-0031
+              </a>
+              <a href="#reservation" class="px-6 py-3.5 rounded-full bg-[#041712] border border-[#C8A86B] text-[#E5C98D] font-extrabold text-base hover:bg-[#0A2E24] transition">
+                방문예약 신청하기 →
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1473,315 +2238,61 @@
   <!-- ========================================================================= -->
   <!-- 6. SCARCITY OF 84㎡ & MARKET COMPARISON (#scarcity - PDF Page 4 & Page 6) -->
   <!-- ========================================================================= -->
-  <section id="scarcity" class="section-elif">
-    <div class="container-custom">
-      <div class="section-title-wrap">
-        <span class="sub-head">02. SCARCITY & MARKET VALUE</span>
-        <h2 class="main-head">소형평형 위주 거모지구 내 <span class="text-[#E5C98D]">전용 84㎡의 압도적 희소가치</span></h2>
-        <p class="desc-head">거모·신길 공공위주 공급으로 전용 60㎡ 이하 소형 비중이 압도적이며, 국민평형 84㎡는 매우 희소합니다</p>
-      </div>
-
-      <!-- 상단: 거모지구 면적별 공급 현황 비교 (PDF Page 4) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-        <div class="lg:col-span-5 bg-[#07221B] rounded-2xl p-6 border border-[#C8A86B]/40 flex flex-col justify-between">
-          <div>
-            <span class="text-xs font-extrabold text-[#E5C98D] tracking-wider">GEOMO DISTRICT SUPPLY RATIO</span>
-            <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-1 mb-3">
-              거모지구 블록별 공급면적 분석
-            </h3>
-            <p class="text-sm text-[#C2D6CC] mb-6">
-              거모지구는 A1~A10블록 총 <strong>6,540세대</strong>가 전용 60㎡ 이하(행복·국민임대·신혼희망타운 등)로 구성되어 있어, 4인 가족 및 중형 선호 수요를 위한 <strong>전용 84㎡ 민간분양 단지의 희소성</strong>이 극대화됩니다.
-            </p>
-
-            <!-- 시각적 비율 바 차트 -->
-            <div class="space-y-4">
-              <div>
-                <div class="flex justify-between text-xs font-bold mb-1.5">
-                  <span class="text-[#98B4A6]">전용 60㎡ 이하 (A1~A10블록 : 임대·신혼희망타운 등)</span>
-                  <span class="text-white">총 6,540세대 (61.3%)</span>
-                </div>
-                <div class="w-full h-4 bg-[#041511] rounded-full overflow-hidden">
-                  <div class="h-full bg-[#4B6B60] rounded-full" style="width: 61.3%"></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between text-xs font-bold mb-1.5">
-                  <span class="text-[#E5C98D]">전용 60㎡ 초과 (B1~B6, S1~S3, M1블록 : 민간임대·혼합 포함)</span>
-                  <span class="text-[#E5C98D]">총 4,135세대 (38.7%)</span>
-                </div>
-                <div class="w-full h-4 bg-[#041511] rounded-full overflow-hidden">
-                  <div class="h-full bg-gradient-to-r from-[#C8A86B] to-[#E5C98D] rounded-full" style="width: 38.7%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 p-4 rounded-xl bg-[#041712] border border-[#C8A86B]">
-            <div class="text-xs text-[#E5C98D] font-bold">★ 엘리프 시흥 더프라임 (거모 B-5BL)</div>
-            <div class="text-base font-extrabold text-white mt-0.5">소형 혼합 없는 100% 전용 84㎡ A·B 총 338세대</div>
-          </div>
-        </div>
-
-        <!-- 우측: 거모지구 블록별 세부 공급 표 (탭 전환) -->
-        <div class="lg:col-span-7 bg-[#07221B] rounded-2xl p-6 border border-white/10">
-          <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
-            <h4 class="text-base font-extrabold text-white">거모지구 블록별 공급세대 및 유형 상세</h4>
-            <div class="flex gap-2">
-              <button type="button" id="btnTabOver60" onclick="switchBlockTable('over60')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#C8A86B] text-[#041511]">
-                60㎡ 초과 (4,135세대)
-              </button>
-              <button type="button" id="btnTabUnder60" onclick="switchBlockTable('under60')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#041712] text-[#98B4A6] border border-white/10">
-                60㎡ 이하 (6,540세대)
-              </button>
-            </div>
-          </div>
-
-          <!-- 60㎡ 초과 테이블 -->
-          <div id="tableOver60" class="overflow-x-auto">
-            <table class="w-full text-xs sm:text-sm text-left border-collapse">
-              <thead>
-                <tr class="bg-[#041712] text-[#E5C98D] border-b border-white/15">
-                  <th class="py-2.5 px-3">블록</th>
-                  <th class="py-2.5 px-3">주택규모</th>
-                  <th class="py-2.5 px-3">공급 세대수</th>
-                  <th class="py-2.5 px-3">공급유형</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/10 text-[#DCE7E1]">
-                <tr><td class="py-2 px-3 font-bold">B1</td><td class="py-2 px-3">60~85㎡</td><td class="py-2 px-3">353세대</td><td class="py-2 px-3">민간분양</td></tr>
-                <tr><td class="py-2 px-3 font-bold">B2</td><td class="py-2 px-3">60~85㎡</td><td class="py-2 px-3">300세대</td><td class="py-2 px-3">임대주택건설형</td></tr>
-                <tr><td class="py-2 px-3 font-bold">B3</td><td class="py-2 px-3">60~85㎡</td><td class="py-2 px-3">560세대</td><td class="py-2 px-3">민간분양</td></tr>
-                <tr><td class="py-2 px-3 font-bold">B4</td><td class="py-2 px-3">60~85㎡</td><td class="py-2 px-3">400세대</td><td class="py-2 px-3">민간임대</td></tr>
-                <tr class="bg-[#C8A86B]/20 text-white font-extrabold">
-                  <td class="py-2.5 px-3 text-[#E5C98D]">B5 (당 사업지)</td>
-                  <td class="py-2.5 px-3 text-[#E5C98D]">전용 84㎡ 단일</td>
-                  <td class="py-2.5 px-3 text-[#E5C98D]">338세대 (일반 304)</td>
-                  <td class="py-2.5 px-3 text-[#E5C98D]">엘리프 시흥 더프라임</td>
-                </tr>
-                <tr><td class="py-2 px-3 font-bold">B6</td><td class="py-2 px-3">61~84㎡</td><td class="py-2 px-3">480세대</td><td class="py-2 px-3">민간분양</td></tr>
-                <tr><td class="py-2 px-3 font-bold">S1 / S2 / S3</td><td class="py-2 px-3">혼합 / 84~122㎡</td><td class="py-2 px-3">320 / 382 / 약 490세대</td><td class="py-2 px-3">공공·민간분양</td></tr>
-                <tr><td class="py-2 px-3 font-bold">M1</td><td class="py-2 px-3">혼합/주상복합</td><td class="py-2 px-3">520세대</td><td class="py-2 px-3">민간분양</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- 60㎡ 이하 테이블 -->
-          <div id="tableUnder60" class="overflow-x-auto hidden">
-            <table class="w-full text-xs sm:text-sm text-left border-collapse">
-              <thead>
-                <tr class="bg-[#041712] text-[#E5C98D] border-b border-white/15">
-                  <th class="py-2.5 px-3">블록</th>
-                  <th class="py-2.5 px-3">주택규모</th>
-                  <th class="py-2.5 px-3">공급 세대수</th>
-                  <th class="py-2.5 px-3">공급유형</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/10 text-[#DCE7E1]">
-                <tr><td class="py-2 px-3 font-bold">A1 / A2</td><td class="py-2 px-3">60㎡ 이하</td><td class="py-2 px-3">760 / 460세대</td><td class="py-2 px-3">행복·국민임대 / 행복주택</td></tr>
-                <tr><td class="py-2 px-3 font-bold">A3 / A4</td><td class="py-2 px-3">60㎡ 이하</td><td class="py-2 px-3">980 / 540세대</td><td class="py-2 px-3">행복·국민임대 / 영구·행복주택</td></tr>
-                <tr><td class="py-2 px-3 font-bold">A5 / A6</td><td class="py-2 px-3">60㎡ 이하</td><td class="py-2 px-3">420 / 750세대</td><td class="py-2 px-3">신혼희망타운 등</td></tr>
-                <tr><td class="py-2 px-3 font-bold">A7 / A8</td><td class="py-2 px-3">60㎡ 이하</td><td class="py-2 px-3">1,000 / 510세대</td><td class="py-2 px-3">신혼희망타운 / 행복주택 등</td></tr>
-                <tr><td class="py-2 px-3 font-bold">A9 / A10</td><td class="py-2 px-3">60㎡ 이하</td><td class="py-2 px-3">830 / 290세대</td><td class="py-2 px-3">신혼희망타운 등</td></tr>
-                <tr class="bg-[#041712] font-bold text-[#E5C98D]">
-                  <td class="py-2 px-3" colspan="2">소계 (60㎡ 이하 소형 공공물량)</td>
-                  <td class="py-2 px-3" colspan="2">총 6,540세대</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- 하단: 거모지구 내 인접 분양단지 분양가 비교 (PDF Page 6 데이터 반영) -->
-      <div class="bg-[#07221B] rounded-2xl p-6 sm:p-8 border border-[#C8A86B]/40">
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
-          <div>
-            <span class="text-xs font-extrabold text-[#E5C98D] tracking-wider">MARKET PRICE COMPARISON</span>
-            <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-1">시흥거모지구 내 주요 분양단지 시세 비교 (기준: 전용 84㎡)</h3>
-          </div>
-          <span class="text-xs text-[#98B4A6]">출처 : 입주자모집공고 기준 / 단위 : 천원</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- 단지 1: M사 (B-6BL) -->
-          <div class="bg-[#041712] rounded-xl p-5 border border-white/10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold">① 'M'사 (B-6BL)</span>
-                <span class="text-xs text-[#34D399] font-bold">100% 분양완료</span>
-              </div>
-              <p class="text-xs text-[#98B4A6] mb-3">2025.11 분양 | 지하2층~지상24층 | 480세대 (61·84㎡)</p>
-            </div>
-            <div class="space-y-1.5 pt-3 border-t border-white/10 text-xs">
-              <div class="flex justify-between"><span>84㎡ 분양가</span><strong class="text-white">586,700천원</strong></div>
-              <div class="flex justify-between"><span>발코니 확장비</span><strong class="text-white">8,000천원</strong></div>
-              <div class="flex justify-between text-sm pt-1"><span class="text-[#E5C98D] font-bold">평당가</span><strong class="text-[#E5C98D] font-black">@17,079천원</strong></div>
-            </div>
-          </div>
-
-          <!-- 단지 2: S사 (B-1BL) -->
-          <div class="bg-[#041712] rounded-xl p-5 border border-white/10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold">② 'S'사 (B-1BL)</span>
-                <span class="text-xs text-[#98B4A6]">2026.03 분양</span>
-              </div>
-              <p class="text-xs text-[#98B4A6] mb-3">지하2층~지상25층 5개동 | 총 353세대 (84㎡)</p>
-            </div>
-            <div class="space-y-1.5 pt-3 border-t border-white/10 text-xs">
-              <div class="flex justify-between"><span>84㎡ 분양가</span><strong class="text-white">597,600천원</strong></div>
-              <div class="flex justify-between"><span>발코니 확장비</span><strong class="text-white">6,100천원</strong></div>
-              <div class="flex justify-between text-sm pt-1"><span class="text-[#E5C98D] font-bold">평당가</span><strong class="text-[#E5C98D] font-black">@17,548천원</strong></div>
-            </div>
-          </div>
-
-          <!-- 단지 3: D사 (S-2/B-2BL) -->
-          <div class="bg-[#041712] rounded-xl p-5 border border-white/10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold">③ 'D'사 (S-2/B-2BL)</span>
-                <span class="text-xs text-[#98B4A6]">2025.11 분양</span>
-              </div>
-              <p class="text-xs text-[#98B4A6] mb-3">지하3층~지상46층 12개동 | 총 652세대 (84·122㎡)</p>
-            </div>
-            <div class="space-y-1.5 pt-3 border-t border-white/10 text-xs">
-              <div class="flex justify-between"><span>84㎡ 분양가</span><strong class="text-white">649,770천원</strong></div>
-              <div class="flex justify-between"><span>발코니 확장비</span><strong class="text-white">8,130천원</strong></div>
-              <div class="flex justify-between text-sm pt-1"><span class="text-[#E5C98D] font-bold">평당가</span><strong class="text-[#E5C98D] font-black">@18,434천원</strong></div>
-            </div>
-          </div>
-
-          <!-- 단지 4: A-5BL 신혼희망타운 -->
-          <div class="bg-[#041712] rounded-xl p-5 border border-white/10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-extrabold">④ A-5BL 신혼희망타운</span>
-                <span class="text-xs text-[#98B4A6]">공공분양 290세대</span>
-              </div>
-              <p class="text-xs text-[#98B4A6] mb-3">지상8층~25층 6개동 | 총 435세대 (전용 55.77㎡)</p>
-            </div>
-            <div class="space-y-1.5 pt-3 border-t border-white/10 text-xs">
-              <div class="flex justify-between"><span>공급면적</span><strong class="text-white">전용 55.77㎡ (24.86py)</strong></div>
-              <div class="flex justify-between"><span>비고</span><strong class="text-white">소형 평형 구성</strong></div>
-              <div class="flex justify-between text-sm pt-1"><span class="text-[#E5C98D] font-bold">평당가(최고)</span><strong class="text-[#E5C98D] font-black">@18,020천원</strong></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 7. SITEPLAN & COMMUNITY & STORAGE SPECIALS (#siteplan - PDF Page 7 & Page 8) -->
+  <!-- 7. SITEPLAN & COMMUNITY & STORAGE SPECIALS (#siteplan - 커뮤니티 시설.jpg 배치) -->
   <!-- ========================================================================= -->
   <section id="siteplan" class="section-elif-alt">
     <div class="container-custom">
       <div class="section-title-wrap">
         <span class="sub-head">03. SITE PLAN & COMMUNITY</span>
-        <h2 class="main-head">단지배치도 및 <span class="text-[#E5C98D]">전 세대 지하 세대창고 제공</span></h2>
-        <p class="desc-head">피트니스·골프연습장·GX룸·맘스스테이션부터 각 동 지하 1층 전용 세대창고까지 완성도 높은 상품성</p>
+        <h2 class="main-head">고품격 커뮤니티 아이소메트릭 및 <span class="text-[#E5C98D]">전 세대 지하 세대창고</span></h2>
+        <p class="desc-head">A 주민공동시설(피트니스·골프연습장·GX룸·썬큰) · B 어린이집 · C 경로당과 각 동 지하 1층 전용 세대창고 제공</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
-        <!-- 좌측: 단지 배치도 & 조경 특화 (PDF Page 7 상단 재현) -->
-        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-[#C8A86B]/30">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <span class="text-xs font-extrabold text-[#E5C98D]">SITE PLAN & LANDSCAPE</span>
-              <h3 class="text-lg font-extrabold text-white">단지배치 및 주요 부대시설 안내</h3>
-            </div>
-            <span class="text-xs px-2.5 py-1 rounded bg-[#004B3B] text-white font-bold">101동 ~ 104동</span>
+      <!-- [핵심 배치 2] 업로드된 커뮤니티 시설.jpg 대형 쇼케이스 -->
+      <div class="bg-[#07221B] rounded-2xl p-4 sm:p-6 border-2 border-[#C8A86B]/60 shadow-2xl mb-10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="px-3 py-1 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black">COMMUNITY ISOMETRIC</span>
+            <h3 class="text-lg sm:text-xl font-extrabold text-white">단지 내 커뮤니티 시설 상세 배치도 (Key Map & A·B·C Zone)</h3>
           </div>
-
-          <!-- 단지배치 다이어그램 SVG (PDF Page 7 & Page 8 동 배치 반영) -->
-          <svg viewBox="0 0 500 320" class="w-full h-auto rounded-xl bg-[#041712] border border-white/10 p-3">
-            <!-- 외곽 단지 경계 및 녹지 -->
-            <rect x="20" y="20" width="460" height="280" rx="22" fill="#0B3328" stroke="#C8A86B" stroke-width="1.5" stroke-dasharray="5 3"/>
-            <!-- 중앙광장 잔디 -->
-            <rect x="155" y="110" width="180" height="105" rx="14" fill="#134E3D" stroke="#34D399" stroke-width="1.5"/>
-            <text x="245" y="160" fill="#A7F3D0" font-size="13" font-weight="bold" text-anchor="middle">대형 중앙광장</text>
-            <text x="245" y="177" fill="#DCE7E1" font-size="10" text-anchor="middle">& 어린이놀이터</text>
-
-            <!-- 상단 어린이집·경로당 -->
-            <rect x="245" y="34" width="110" height="32" rx="5" fill="#7C2D12" stroke="#FDBA74" stroke-width="1.5"/>
-            <text x="300" y="54" fill="#FFEDD5" font-size="11" font-weight="bold" text-anchor="middle">어린이집 · 경로당</text>
-
-            <!-- 상단 동 (102동) -->
-            <rect x="145" y="74" width="185" height="28" rx="4" fill="#EBF2EE"/>
-            <text x="237" y="92" fill="#041511" font-size="12" font-weight="900" text-anchor="middle">102동 (지하1층 세대창고)</text>
-
-            <!-- 좌측 동 (101동) -->
-            <path d="M 60,120 H 95 V 170 H 135 V 200 H 60 Z" fill="#EBF2EE"/>
-            <text x="95" y="190" fill="#041511" font-size="11" font-weight="900" text-anchor="middle">101동</text>
-
-            <!-- 우측 동 (104동) & 맘스스테이션 -->
-            <rect x="360" y="102" width="68" height="24" rx="4" fill="#7C2D12" stroke="#FDBA74" stroke-width="1.5"/>
-            <text x="394" y="118" fill="#FFEDD5" font-size="10.5" font-weight="bold" text-anchor="middle">맘스스테이션</text>
-
-            <path d="M 380,132 H 420 V 202 H 345 V 172 H 380 Z" fill="#EBF2EE"/>
-            <text x="385" y="192" fill="#041511" font-size="11" font-weight="900" text-anchor="middle">104동</text>
-
-            <!-- 하단 동 (103동) -->
-            <rect x="145" y="226" width="185" height="28" rx="4" fill="#EBF2EE"/>
-            <text x="237" y="244" fill="#041511" font-size="12" font-weight="900" text-anchor="middle">103동 (지하1층 세대창고)</text>
-
-            <!-- 우측 하단 주민공동시설 -->
-            <rect x="348" y="224" width="112" height="44" rx="6" fill="#004B3B" stroke="#E5C98D" stroke-width="2"/>
-            <text x="404" y="244" fill="#E5C98D" font-size="11.5" font-weight="900" text-anchor="middle">주민공동시설</text>
-            <text x="404" y="259" fill="#FFFFFF" font-size="9.5" text-anchor="middle">(피트니스·골프·GX·선큰)</text>
-          </svg>
+          <span class="text-xs text-[#E5C98D] font-bold">🔍 이미지 클릭 시 크게 확대됩니다</span>
         </div>
 
-        <!-- 우측: 단지 내 커뮤니티 시설 평면도 (PDF Page 7 우측 하단 도면 재현) -->
-        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-[#C8A86B]/30 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <div>
-                <span class="text-xs font-extrabold text-[#E5C98D]">COMMUNITY FLOOR PLAN</span>
-                <h3 class="text-lg font-extrabold text-white">주민공동시설 커뮤니티 평면 안내</h3>
-              </div>
-              <span class="text-xs text-[#98B4A6]">웰빙 피트니스 & 골프존</span>
+        <div class="rounded-xl overflow-hidden border border-white/20 bg-white cursor-pointer" onclick="openImageLightbox(document.getElementById('communityIsoImg').src, '엘리프 시흥 더프라임 커뮤니티 시설 안내 (커뮤니티 시설.jpg)')">
+          <img src="커뮤니티 시설.jpg" alt="엘리프 시흥 더프라임 커뮤니티 시설 - Key map(101~104동), A 주민공동시설(썬큰, 주민회의실, 탈의실, 피트니스, GX룸, 골프연습장), B 어린이집(보육실, 유희실, 교사실), C 경로당(할머니방, 할아버지방, 취미실)" class="w-full h-auto block" id="communityIsoImg" onerror="handleCommunityImgError(this)">
+        </div>
+
+        <!-- 커뮤니티 시설.jpg의 A / B / C 존 상세 설명 카드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+          <div class="bg-[#041712] p-5 rounded-xl border border-[#C8A86B]/50">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-black flex items-center justify-center">A</span>
+              <h4 class="text-base font-extrabold text-white">주민공동시설 (103동 인접)</h4>
             </div>
-
-            <!-- 커뮤니티 구조 다이어그램 (골프연습장, GX룸, 피트니스, 탈의실/샤워실, 로비, 주민회의실, SUNKEN) -->
-            <svg viewBox="0 0 500 230" class="w-full h-auto rounded-xl bg-[#041712] border border-white/10 p-3">
-              <rect x="15" y="15" width="470" height="200" rx="8" fill="#082820" stroke="#98B4A6" stroke-width="1.5"/>
-              <!-- 골프연습장 -->
-              <rect x="22" y="22" width="105" height="130" rx="4" fill="#0D3B2E" stroke="#C8A86B" stroke-width="1.5"/>
-              <text x="74" y="82" fill="#E5C98D" font-size="13" font-weight="900" text-anchor="middle">골프연습장</text>
-              <text x="74" y="100" fill="#DCE7E1" font-size="10" text-anchor="middle">스크린·타석 완비</text>
-
-              <!-- GX룸 -->
-              <rect x="22" y="158" width="105" height="50" rx="4" fill="#0D3B2E" stroke="#98B4A6" stroke-width="1"/>
-              <text x="74" y="188" fill="#FFFFFF" font-size="13" font-weight="800" text-anchor="middle">GX룸</text>
-
-              <!-- 탈의실/샤워실 -->
-              <rect x="133" y="22" width="165" height="62" rx="4" fill="#0A2E24" stroke="#98B4A6" stroke-width="1"/>
-              <text x="215" y="57" fill="#DCE7E1" font-size="12" font-weight="800" text-anchor="middle">탈의실 · 샤워실</text>
-
-              <!-- 주민회의실 -->
-              <rect x="380" y="22" width="98" height="62" rx="4" fill="#0A2E24" stroke="#98B4A6" stroke-width="1"/>
-              <text x="429" y="57" fill="#DCE7E1" font-size="12" font-weight="800" text-anchor="middle">주민회의실</text>
-
-              <!-- 로비 -->
-              <rect x="304" y="88" width="174" height="28" rx="4" fill="#062019"/>
-              <text x="391" y="106" fill="#E5C98D" font-size="11.5" font-weight="bold" text-anchor="middle">커뮤니티 로비 (LOBBY)</text>
-
-              <!-- 피트니스 -->
-              <rect x="133" y="120" width="215" height="88" rx="4" fill="#004B3B" stroke="#E5C98D" stroke-width="1.5"/>
-              <text x="240" y="162" fill="#FFFFFF" font-size="15" font-weight="900" text-anchor="middle">피트니스 센터</text>
-              <text x="240" y="180" fill="#E5C98D" font-size="10.5" text-anchor="middle">유산소 · 웨이트 트레이닝 존</text>
-
-              <!-- SUNKEN -->
-              <rect x="354" y="120" width="124" height="88" rx="4" fill="#134E3D" stroke="#34D399" stroke-width="1.5"/>
-              <text x="416" y="162" fill="#A7F3D0" font-size="14" font-weight="900" text-anchor="middle">SUNKEN</text>
-              <text x="416" y="180" fill="#DCE7E1" font-size="10" text-anchor="middle">자연채광 선큰가든</text>
-            </svg>
+            <p class="text-xs text-[#C2D6CC] leading-relaxed">
+              자연채광 <strong>썬큰(SUNKEN)</strong>과 연계된 대형 <strong>피트니스 센터</strong>, 타석을 갖춘 <strong>골프연습장</strong>, <strong>GX룸</strong>, 남·여 <strong>탈의실 및 샤워실</strong>, <strong>주민회의실</strong> 완비
+            </p>
           </div>
 
-          <p class="text-xs text-[#A3BDB1] mt-3">
-            ※ 세대수에 알맞은 피트니스, 골프연습장, GX룸, 선큰가든, 맘스스테이션, 어린이놀이터, 경로당·어린이집 구성으로 입주민의 웰빙라이프를 실현합니다.
-          </p>
+          <div class="bg-[#041712] p-5 rounded-xl border border-white/15">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-black flex items-center justify-center">B</span>
+              <h4 class="text-base font-extrabold text-white">단지 내 어린이집 (101동 북측)</h4>
+            </div>
+            <p class="text-xs text-[#C2D6CC] leading-relaxed">
+              아이들의 안전한 보육과 성장을 위한 다수의 <strong>보육실(4개소)</strong>, 쾌적한 실내 <strong>유희실</strong>, <strong>교사실</strong> 및 전용 화장실 등을 갖춘 안심 보육 특화 공간
+            </p>
+          </div>
+
+          <div class="bg-[#041712] p-5 rounded-xl border border-white/15">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-6 h-6 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-black flex items-center justify-center">C</span>
+              <h4 class="text-base font-extrabold text-white">경로당 · 시니어클럽 (101동·104동 인접)</h4>
+            </div>
+            <p class="text-xs text-[#C2D6CC] leading-relaxed">
+              어르신들의 편안한 여가와 교류를 위해 독립된 <strong>할머니방</strong>, <strong>할아버지방</strong>, 다목적 <strong>취미실</strong> 및 거실·주방 공간을 갖춘 시니어 맞춤형 커뮤니티
+            </p>
+          </div>
         </div>
       </div>
 
@@ -1812,24 +2323,37 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 8. UNIT PLAN (#types - 84㎡A / 84㎡B 세대평면 안내) -->
+  <!-- 8. UNIT PLAN (#types - 84a.PNG & 84b.PNG 세대평면 완벽 배치) -->
   <!-- ========================================================================= -->
   <section id="types" class="section-elif">
     <div class="container-custom">
       <div class="section-title-wrap">
-        <span class="sub-head">03. UNIT PLAN</span>
-        <h2 class="main-head">전 세대 국민평형 <span class="text-[#E5C98D]">전용 84㎡ A·B 혁신 평면</span></h2>
-        <p class="desc-head">4Bay 판상형 맞통풍 구조와 넉넉한 수납 특화(드레스룸·팬트리·지하 세대창고)로 완성한 프리미엄 공간</p>
+        <span class="sub-head">03. UNIT PLAN (84㎡A · 84㎡B)</span>
+        <h2 class="main-head">전 세대 국민평형 <span class="text-[#E5C98D]">전용 84㎡ A·B 확장 옵션형 평면도</span></h2>
+        <p class="desc-head">4Bay 판상형 맞통풍 구조와 대형 드레스룸·다용도실·현관 수납 특화로 완성한 프리미엄 공간 (클릭 시 확대 보기)</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- 84A 타입 카드 -->
-        <div class="bg-[#07221B] rounded-2xl overflow-hidden border border-[#C8A86B]/50 shadow-xl flex flex-col justify-between">
+      <!-- 평면도 뷰 전환 탭 -->
+      <div class="flex justify-center gap-2 sm:gap-3 mb-8 flex-wrap">
+        <button type="button" id="unitTabAll" onclick="switchUnitPlanTab('all')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-black bg-[#C8A86B] text-[#041511] shadow-md transition">
+          84㎡A · 84㎡B 한눈에 비교
+        </button>
+        <button type="button" id="unitTab84A" onclick="switchUnitPlanTab('84a')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-extrabold bg-[#07221B] text-[#DCE7E1] border border-[#C8A86B]/40 hover:border-[#C8A86B] transition">
+          84㎡A 확장 옵션형 (288세대) 크게 보기
+        </button>
+        <button type="button" id="unitTab84B" onclick="switchUnitPlanTab('84b')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-extrabold bg-[#07221B] text-[#DCE7E1] border border-[#C8A86B]/40 hover:border-[#C8A86B] transition">
+          84㎡B 확장 옵션형 (50세대) 크게 보기
+        </button>
+      </div>
+
+      <div id="unitPlanGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- 84A 타입 카드 (84a.PNG 배치) -->
+        <div id="unitCard84A" class="bg-[#07221B] rounded-2xl overflow-hidden border-2 border-[#C8A86B]/60 shadow-xl flex flex-col justify-between">
           <div class="p-6 sm:p-8">
             <div class="flex items-center justify-between flex-wrap gap-2 pb-4 mb-5 border-b border-white/10">
               <div>
                 <span class="px-3 py-1 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black">주력 타입 (전체 세대의 85.2%)</span>
-                <h3 class="text-2xl sm:text-3xl font-black text-white mt-2">84㎡ A TYPE</h3>
+                <h3 class="text-2xl sm:text-3xl font-black text-white mt-2">84㎡ A <span class="text-lg font-bold text-[#E5C98D]">확장 옵션형</span></h3>
               </div>
               <div class="text-right">
                 <div class="text-xs text-[#98B4A6]">전체 288세대</div>
@@ -1837,7 +2361,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2.5 text-center mb-6">
+            <div class="grid grid-cols-3 gap-2.5 text-center mb-5">
               <div class="bg-[#041712] p-3 rounded-xl border border-white/10">
                 <span class="text-[11px] text-[#98B4A6] block">전용면적</span>
                 <strong class="text-sm sm:text-base text-white font-extrabold">84.9607㎡</strong>
@@ -1852,53 +2376,33 @@
               </div>
             </div>
 
-            <!-- 84A 평면 레이아웃 다이어그램 -->
-            <svg viewBox="0 0 460 220" class="w-full h-auto rounded-xl bg-[#041712] border border-white/10 p-3 mb-4">
-              <rect x="18" y="18" width="424" height="184" rx="8" fill="#082820" stroke="#C8A86B" stroke-width="1.5"/>
-              <!-- 4Bay 전면부 (침실3 - 침실2 - 거실 - 안방) -->
-              <rect x="26" y="112" width="78" height="82" rx="4" fill="#0D3B2E" stroke="#98B4A6"/>
-              <text x="65" y="156" fill="#FFFFFF" font-size="11.5" font-weight="bold" text-anchor="middle">침실 3</text>
+            <!-- [핵심 배치 3] 업로드된 84a.PNG 이미지 -->
+            <div class="rounded-xl overflow-hidden border-2 border-[#C8A86B]/40 bg-[#D7E4E0] mb-4 cursor-pointer relative group" onclick="openImageLightbox(document.getElementById('unitImg84A').src, '엘리프 시흥 더프라임 84㎡A 확장 옵션형 평면도')">
+              <img src="84a.PNG" alt="엘리프 시흥 더프라임 84A 확장 옵션형 평면도" class="w-full h-auto block" id="unitImg84A" onerror="handleUnitImgError(this, '84A')">
+              <div class="absolute bottom-2.5 right-2.5 bg-[#041511]/85 text-[#E5C98D] text-[11px] font-bold px-3 py-1 rounded-full border border-[#C8A86B]/50">
+                🔍 클릭하여 확대 보기
+              </div>
+            </div>
 
-              <rect x="110" y="112" width="78" height="82" rx="4" fill="#0D3B2E" stroke="#98B4A6"/>
-              <text x="149" y="156" fill="#FFFFFF" font-size="11.5" font-weight="bold" text-anchor="middle">침실 2</text>
-
-              <rect x="194" y="102" width="122" height="92" rx="4" fill="#004B3B" stroke="#E5C98D" stroke-width="1.5"/>
-              <text x="255" y="148" fill="#E5C98D" font-size="14" font-weight="900" text-anchor="middle">거실 (Living)</text>
-              <text x="255" y="166" fill="#DCE7E1" font-size="10" text-anchor="middle">4Bay 맞통풍 판상형</text>
-
-              <rect x="322" y="102" width="112" height="92" rx="4" fill="#0D3B2E" stroke="#C8A86B"/>
-              <text x="378" y="148" fill="#FFFFFF" font-size="13" font-weight="900" text-anchor="middle">안방 (Master)</text>
-              <text x="378" y="166" fill="#E5C98D" font-size="10" text-anchor="middle">+ 대형 드레스룸</text>
-
-              <!-- 후면부 (현관/욕실 - 주방/다이닝 - 팬트리/다용도실) -->
-              <rect x="26" y="26" width="125" height="78" rx="4" fill="#062019" stroke="#98B4A6"/>
-              <text x="88" y="68" fill="#DCE7E1" font-size="11" font-weight="bold" text-anchor="middle">현관 · 공용욕실 · 팬트리</text>
-
-              <rect x="157" y="26" width="159" height="70" rx="4" fill="#0A2E24" stroke="#34D399"/>
-              <text x="236" y="64" fill="#A7F3D0" font-size="12.5" font-weight="bold" text-anchor="middle">주방 · 다이닝 · 다용도실</text>
-
-              <rect x="322" y="26" width="112" height="70" rx="4" fill="#062019" stroke="#98B4A6"/>
-              <text x="378" y="64" fill="#DCE7E1" font-size="11" font-weight="bold" text-anchor="middle">부부욕실 · 파우더 · 드레스룸</text>
-            </svg>
-
-            <p class="text-xs sm:text-sm text-[#C2D6CC]">
-              • 채광과 통풍이 뛰어난 선호도 1위 4Bay 판상형 맞통풍 설계<br>
-              • 와이드 거실 및 대면형 주방, 대형 드레스룸·팬트리 수납 극대화
+            <p class="text-xs sm:text-sm text-[#C2D6CC] leading-relaxed">
+              • <strong>4Bay 판상형 맞통풍 구조</strong> (침실3 · 침실2 · 거실 · 침실1 전면 배치)<br>
+              • <strong>와이드 주방/식당 & 아일랜드</strong> + 다용도실 연계로 편리한 가사 동선<br>
+              • 안방(침실1) <strong>대형 워크인 드레스룸 · 부부욕실 · 발코니</strong> 및 현관 대용량 수납장
             </p>
           </div>
           <div class="bg-[#041712] px-6 py-3.5 border-t border-white/10 flex items-center justify-between text-xs">
             <span class="text-[#E5C98D] font-bold">✔ 지하 1층 전용 세대창고 1개소 기본 제공</span>
-            <a href="#reservation" class="text-white font-extrabold hover:text-[#E5C98D]">상세 평면 상담신청 →</a>
+            <a href="#reservation" class="text-white font-extrabold hover:text-[#E5C98D]">84A 타입 상담신청 →</a>
           </div>
         </div>
 
-        <!-- 84B 타입 카드 -->
-        <div class="bg-[#07221B] rounded-2xl overflow-hidden border border-[#C8A86B]/50 shadow-xl flex flex-col justify-between">
+        <!-- 84B 타입 카드 (84b.PNG 배치) -->
+        <div id="unitCard84B" class="bg-[#07221B] rounded-2xl overflow-hidden border-2 border-[#C8A86B]/60 shadow-xl flex flex-col justify-between">
           <div class="p-6 sm:p-8">
             <div class="flex items-center justify-between flex-wrap gap-2 pb-4 mb-5 border-b border-white/10">
               <div>
-                <span class="px-3 py-1 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-black">조망·프라이버시 특화 타입</span>
-                <h3 class="text-2xl sm:text-3xl font-black text-white mt-2">84㎡ B TYPE</h3>
+                <span class="px-3 py-1 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-black">희소가치 높은 4Bay 판상형 (대칭형)</span>
+                <h3 class="text-2xl sm:text-3xl font-black text-white mt-2">84㎡ B <span class="text-lg font-bold text-[#E5C98D]">확장 옵션형</span></h3>
               </div>
               <div class="text-right">
                 <div class="text-xs text-[#98B4A6]">전체 50세대</div>
@@ -1906,7 +2410,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2.5 text-center mb-6">
+            <div class="grid grid-cols-3 gap-2.5 text-center mb-5">
               <div class="bg-[#041712] p-3 rounded-xl border border-white/10">
                 <span class="text-[11px] text-[#98B4A6] block">전용면적</span>
                 <strong class="text-sm sm:text-base text-white font-extrabold">84.9236㎡</strong>
@@ -1921,37 +2425,23 @@
               </div>
             </div>
 
-            <!-- 84B 평면 레이아웃 다이어그램 -->
-            <svg viewBox="0 0 460 220" class="w-full h-auto rounded-xl bg-[#041712] border border-white/10 p-3 mb-4">
-              <rect x="18" y="18" width="424" height="184" rx="8" fill="#082820" stroke="#C8A86B" stroke-width="1.5"/>
-              <!-- 2면 개방/타워형 특화 레이아웃 -->
-              <rect x="26" y="26" width="135" height="82" rx="4" fill="#0D3B2E" stroke="#98B4A6"/>
-              <text x="93" y="70" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">침실 2 · 침실 3 (자녀방 존)</text>
+            <!-- [핵심 배치 4] 업로드된 84b.PNG 이미지 -->
+            <div class="rounded-xl overflow-hidden border-2 border-[#C8A86B]/40 bg-[#D7E4E0] mb-4 cursor-pointer relative group" onclick="openImageLightbox(document.getElementById('unitImg84B').src, '엘리프 시흥 더프라임 84㎡B 확장 옵션형 평면도')">
+              <img src="84b.PNG" alt="엘리프 시흥 더프라임 84B 확장 옵션형 평면도" class="w-full h-auto block" id="unitImg84B" onerror="handleUnitImgError(this, '84B')">
+              <div class="absolute bottom-2.5 right-2.5 bg-[#041511]/85 text-[#E5C98D] text-[11px] font-bold px-3 py-1 rounded-full border border-[#C8A86B]/50">
+                🔍 클릭하여 확대 보기
+              </div>
+            </div>
 
-              <rect x="26" y="114" width="135" height="80" rx="4" fill="#062019" stroke="#98B4A6"/>
-              <text x="93" y="158" fill="#DCE7E1" font-size="11.5" font-weight="bold" text-anchor="middle">현관 · 공용욕실 · 수납장</text>
-
-              <rect x="167" y="96" width="142" height="98" rx="4" fill="#004B3B" stroke="#E5C98D" stroke-width="1.5"/>
-              <text x="238" y="142" fill="#E5C98D" font-size="14" font-weight="900" text-anchor="middle">와이드 거실 (Living)</text>
-              <text x="238" y="162" fill="#DCE7E1" font-size="10" text-anchor="middle">개방감 극대화 다이닝 연계</text>
-
-              <rect x="167" y="26" width="142" height="64" rx="4" fill="#0A2E24" stroke="#34D399"/>
-              <text x="238" y="62" fill="#A7F3D0" font-size="12" font-weight="bold" text-anchor="middle">주방 · 아일랜드 · 다용도실</text>
-
-              <rect x="315" y="26" width="119" height="168" rx="4" fill="#0D3B2E" stroke="#C8A86B"/>
-              <text x="374" y="98" fill="#FFFFFF" font-size="13" font-weight="900" text-anchor="middle">마스터룸 (안방)</text>
-              <text x="374" y="118" fill="#E5C98D" font-size="10.5" text-anchor="middle">독립형 프라이버시 설계</text>
-              <text x="374" y="138" fill="#DCE7E1" font-size="10" text-anchor="middle">드레스룸 · 부부욕실 완비</text>
-            </svg>
-
-            <p class="text-xs sm:text-sm text-[#C2D6CC]">
-              • 부부 공간과 자녀 침실의 프라이버시를 존중한 동선 분리형 특화 설계<br>
-              • 거실-주방 통합형 와이드 LDK 구조로 넓고 품격 있는 실내 공간 연출
+            <p class="text-xs sm:text-sm text-[#C2D6CC] leading-relaxed">
+              • <strong>채광·통풍이 탁월한 4Bay 판상형 구조</strong> (침실1 · 거실 · 침실2 · 침실3 전면 배치)<br>
+              • <strong>개방감 높은 거실-주방/식당 맞통풍 설계</strong> 및 다용도실 직결 동선<br>
+              • 안방(침실1) <strong>대형 드레스룸 · 부부욕실 · 발코니</strong> 및 넉넉한 현관·복도 수납공간
             </p>
           </div>
           <div class="bg-[#041712] px-6 py-3.5 border-t border-white/10 flex items-center justify-between text-xs">
             <span class="text-[#E5C98D] font-bold">✔ 지하 1층 전용 세대창고 1개소 기본 제공</span>
-            <a href="#reservation" class="text-white font-extrabold hover:text-[#E5C98D]">상세 평면 상담신청 →</a>
+            <a href="#reservation" class="text-white font-extrabold hover:text-[#E5C98D]">84B 타입 상담신청 →</a>
           </div>
         </div>
       </div>
@@ -1964,94 +2454,87 @@
   <section id="subscription" class="section-elif-alt">
     <div class="container-custom">
       <div class="section-title-wrap">
-        <span class="sub-head">04. SUBSCRIPTION CHECKPOINT</span>
+        <span class="sub-head">04. SUBSCRIPTION CHECKLIST</span>
         <h2 class="main-head">엘리프 시흥 더프라임 <span class="text-[#E5C98D]">1순위 청약 체크포인트</span></h2>
-        <p class="desc-head">유주택자도 1순위 청약 가능! 세대주·세대원 누구나 신청 가능한 수도권 분양가상한제 단지</p>
+        <p class="desc-head">유주택자도 1순위 청약 가능! 만 19세 이상 수도권 거주자라면 세대주·세대원 누구나 청약 가능합니다</p>
       </div>
 
-      <!-- 5대 체크포인트 카드 (PDF Page 9 상단 반영) -->
+      <!-- 5대 체크포인트 카드 (PDF Page 9) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-        <div class="bg-[#07221B] rounded-2xl p-5 border border-[#C8A86B]/40 text-center">
-          <span class="inline-block px-3 py-0.5 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black mb-2">청약통장</span>
-          <h4 class="text-lg font-extrabold text-white mb-1">가입기간 1년 이상</h4>
-          <p class="text-xs text-[#C2D6CC]">지역별 / 면적별<br>예치금 충족 시</p>
+        <div class="bg-[#07221B] p-5 rounded-2xl border border-[#C8A86B]/40 text-center">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#E5C98D] text-xs font-extrabold mb-2">CHECK 01. 청약통장</span>
+          <h4 class="text-base font-extrabold text-white mb-1">가입기간 1년 이상</h4>
+          <p class="text-xs text-[#98B4A6]">지역별 / 면적별<br>청약 예치금 충족 시</p>
         </div>
-        <div class="bg-[#07221B] rounded-2xl p-5 border border-[#C8A86B]/40 text-center">
-          <span class="inline-block px-3 py-0.5 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black mb-2">주택소유</span>
-          <h4 class="text-lg font-extrabold text-[#E5C98D] mb-1">유주택자 청약가능</h4>
-          <p class="text-xs text-[#C2D6CC]">1순위 추첨제 물량<br>유주택자 신청 가능</p>
+        <div class="bg-[#07221B] p-5 rounded-2xl border border-[#C8A86B]/40 text-center">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#E5C98D] text-xs font-extrabold mb-2">CHECK 02. 주택소유</span>
+          <h4 class="text-base font-extrabold text-[#E5C98D] mb-1">유주택자 청약 가능</h4>
+          <p class="text-xs text-[#98B4A6]">1순위 청약 가능<br>(무주택·유주택 모두)</p>
         </div>
-        <div class="bg-[#07221B] rounded-2xl p-5 border border-[#C8A86B]/40 text-center">
-          <span class="inline-block px-3 py-0.5 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black mb-2">거주지역</span>
-          <h4 class="text-lg font-extrabold text-white mb-1">수도권 거주자</h4>
-          <p class="text-xs text-[#C2D6CC]">시흥시 · 경기도 ·<br>서울특별시 · 인천광역시</p>
+        <div class="bg-[#07221B] p-5 rounded-2xl border border-[#C8A86B]/40 text-center">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#E5C98D] text-xs font-extrabold mb-2">CHECK 03. 거주지역</span>
+          <h4 class="text-base font-extrabold text-white mb-1">수도권 거주자</h4>
+          <p class="text-xs text-[#98B4A6]">시흥시 · 경기도 ·<br>인천 · 서울 거주자</p>
         </div>
-        <div class="bg-[#07221B] rounded-2xl p-5 border border-[#C8A86B]/40 text-center">
-          <span class="inline-block px-3 py-0.5 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black mb-2">청약자격</span>
-          <h4 class="text-lg font-extrabold text-[#E5C98D] mb-1">세대주 · 세대원 누구나</h4>
-          <p class="text-xs text-[#C2D6CC]">만 19세 이상 성년자<br>부부 중복청약 가능</p>
+        <div class="bg-[#07221B] p-5 rounded-2xl border border-[#C8A86B]/40 text-center">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#E5C98D] text-xs font-extrabold mb-2">CHECK 04. 청약자격</span>
+          <h4 class="text-base font-extrabold text-white mb-1">세대주 · 세대원 누구나</h4>
+          <p class="text-xs text-[#98B4A6]">만 19세 이상 성년자<br>누구나 청약 가능</p>
         </div>
-        <div class="bg-[#07221B] rounded-2xl p-5 border border-[#C8A86B]/40 text-center">
-          <span class="inline-block px-3 py-0.5 rounded-full bg-[#C8A86B] text-[#041511] text-xs font-black mb-2">당첨이력</span>
-          <h4 class="text-lg font-extrabold text-white mb-1">과거당첨 무관</h4>
-          <p class="text-xs text-[#C2D6CC]">단, 2년 내 가점제 당첨 시<br>추첨제 청약 가능</p>
+        <div class="bg-[#07221B] p-5 rounded-2xl border border-[#C8A86B]/40 text-center">
+          <span class="inline-block px-3 py-1 rounded-full bg-[#C8A86B]/20 text-[#E5C98D] text-xs font-extrabold mb-2">CHECK 05. 당첨이력</span>
+          <h4 class="text-base font-extrabold text-white mb-1">과거 당첨 무관</h4>
+          <p class="text-xs text-[#98B4A6]">단, 2년 내 가점제 당첨 시<br>추첨제 청약 가능</p>
         </div>
       </div>
 
-      <!-- 지역 우선공급 기준 & 청약 예치금 기준 (PDF Page 9 하단 반영) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- 좌측: 지역 우선공급 기준 -->
-        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-white/10 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-extrabold text-white">지역 우선공급 배정 기준</h3>
-              <span class="px-2.5 py-1 rounded bg-[#004B3B] text-[#E5C98D] text-xs font-bold">전매제한 3년 · 분양가상한제</span>
+      <!-- 지역 우선공급 기준 & 청약 예치금 기준 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-[#C8A86B]/30">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-extrabold text-white">지역 우선공급 기준</h3>
+            <span class="px-3 py-1 rounded-full bg-[#004B3B] border border-[#C8A86B] text-[#E5C98D] text-xs font-bold">전매제한 3년 · 분양가상한제</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="p-4 rounded-xl bg-[#041712] border border-[#C8A86B]/50">
+              <span class="text-xs text-[#98B4A6] block">해당지역 (시흥시)</span>
+              <strong class="text-2xl font-black text-[#E5C98D] block my-1">30%</strong>
+              <span class="text-[11px] text-white">시흥시 1년 이상 거주자</span>
             </div>
-            <div class="grid grid-cols-3 gap-3 text-center my-4">
-              <div class="p-4 rounded-xl bg-[#041712] border-2 border-[#C8A86B]">
-                <span class="text-xs text-[#E5C98D] font-bold block">해당지역 (시흥시)</span>
-                <strong class="text-2xl font-black text-white block my-1">30%</strong>
-                <span class="text-[11px] text-[#98B4A6]">시흥시 1년 이상 거주자</span>
-              </div>
-              <div class="p-4 rounded-xl bg-[#041712] border border-white/15">
-                <span class="text-xs text-[#E5C98D] font-bold block">경기도</span>
-                <strong class="text-2xl font-black text-white block my-1">20%</strong>
-                <span class="text-[11px] text-[#98B4A6]">경기도 6개월 이상 거주자</span>
-              </div>
-              <div class="p-4 rounded-xl bg-[#041712] border border-white/15">
-                <span class="text-xs text-[#E5C98D] font-bold block">수도권 전체</span>
-                <strong class="text-2xl font-black text-white block my-1">50%</strong>
-                <span class="text-[11px] text-[#98B4A6]">서울 · 인천 · 경기도</span>
-              </div>
+            <div class="p-4 rounded-xl bg-[#041712] border border-white/10">
+              <span class="text-xs text-[#98B4A6] block">경기도</span>
+              <strong class="text-2xl font-black text-white block my-1">20%</strong>
+              <span class="text-[11px] text-[#98B4A6]">경기도 6개월 이상 거주자</span>
+            </div>
+            <div class="p-4 rounded-xl bg-[#041712] border border-white/10">
+              <span class="text-xs text-[#98B4A6] block">수도권</span>
+              <strong class="text-2xl font-black text-white block my-1">50%</strong>
+              <span class="text-[11px] text-[#98B4A6]">서울 · 인천 · 경기도</span>
             </div>
           </div>
-          <p class="text-xs text-[#A3BDB1]">
-            ※ 시흥시 및 경기도 우선공급 낙첨자는 별도 신청 없이 다음 순위(기타 수도권 50%) 물량과 합산하여 다시 추첨 기회를 갖게 됩니다.
-          </p>
         </div>
 
-        <!-- 우측: 지역별 청약 예치금 기준 표 -->
-        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-white/10">
-          <h3 class="text-lg font-extrabold text-white mb-4">지역별 청약 예치금 기준 (입주자모집공고일 기준)</h3>
+        <div class="lg:col-span-6 bg-[#07221B] rounded-2xl p-6 border border-[#C8A86B]/30">
+          <h3 class="text-lg font-extrabold text-white mb-4">지역별 청약 예치금 기준</h3>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm text-center border-collapse">
+            <table class="w-full text-center text-sm border-collapse">
               <thead>
                 <tr class="bg-[#041712] text-[#E5C98D] border-b border-white/15">
-                  <th class="py-3 px-3 text-left">구분</th>
+                  <th class="py-3 px-3">구분</th>
                   <th class="py-3 px-3">경기도 (시흥시 포함)</th>
                   <th class="py-3 px-3">인천광역시</th>
                   <th class="py-3 px-3">서울특별시</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/10 text-white">
-                <tr class="bg-[#C8A86B]/15 font-extrabold">
-                  <td class="py-3.5 px-3 text-left text-[#E5C98D]">전용면적 85㎡ 이하<br><span class="text-[11px] text-[#DCE7E1] font-normal">(당 사업지 84A·84B 해당)</span></td>
-                  <td class="py-3.5 px-3 text-lg text-[#E5C98D]">200만원</td>
-                  <td class="py-3.5 px-3 text-lg">250만원</td>
-                  <td class="py-3.5 px-3 text-lg">300만원</td>
+                <tr class="bg-[#092B22]/60 font-bold">
+                  <td class="py-3 px-3 text-[#E5C98D]">전용면적 85㎡ 이하</td>
+                  <td class="py-3 px-3 text-base text-[#E5C98D]">200만원</td>
+                  <td class="py-3 px-3">250만원</td>
+                  <td class="py-3 px-3">300만원</td>
                 </tr>
-                <tr class="text-[#C2D6CC]">
-                  <td class="py-3 px-3 text-left font-semibold">모든 면적</td>
+                <tr>
+                  <td class="py-3 px-3 text-[#98B4A6]">모든 면적</td>
                   <td class="py-3 px-3">500만원</td>
                   <td class="py-3 px-3">1,000만원</td>
                   <td class="py-3 px-3">1,500만원</td>
@@ -2065,64 +2548,54 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 10. FAQ SECTION (#faq - 담당자: 나인수 / 대표번호: 1555-0031 / 문자: 010-7181-3469) -->
+  <!-- 10. FAQ SECTION (#faq) -->
   <!-- ========================================================================= -->
   <section id="faq" class="section-elif">
     <div class="container-custom">
       <div class="section-title-wrap">
         <span class="sub-head">FREQUENTLY ASKED QUESTIONS</span>
-        <h2 class="main-head">자주 묻는 질문 (FAQ)</h2>
+        <h2 class="main-head">자주 묻는 질문</h2>
         <p class="desc-head">엘리프 시흥 더프라임 분양 및 청약과 관련해 가장 궁금해하시는 사항을 안내해 드립니다</p>
       </div>
 
       <div class="faq-accordion">
         <div class="faq-item open">
           <div class="faq-question" onclick="toggleFaq(this)">
-            <span>Q1. 엘리프 시흥 더프라임의 분양가 경쟁력과 공급 평형은 어떻게 되나요?</span>
+            <span>Q1. 엘리프 시흥 더프라임의 분양가 경쟁력과 혜택은 무엇인가요?</span>
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            엘리프 시흥 더프라임(시흥거모지구 B-5BL)은 공공택지 <strong>분양가상한제 적용 단지</strong>로 합리적인 분양가가 책정됩니다. 특히 전용 60㎡ 이하 소형 위주로 공급되는 거모지구 내에서 희소가치가 매우 높은 <strong>전 세대 전용 84㎡(84A 288세대, 84B 50세대 / 총 338세대 중 일반분양 304세대)</strong>로 구성됩니다.
+            엘리프 시흥 더프라임은 공공택지 <strong>분양가상한제 적용 단지</strong>로, 수도권 역세권 전용 84㎡(34평형)를 5억대의 합리적인 가격으로 마련할 수 있는 기회입니다. 또한 전 세대에 각 동 지하 1층 전용 세대창고(세대당 1개소)가 기본 제공되며, 계약 시 백화점 상품권(신세계상품권) 증정 이벤트가 진행됩니다.
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            <span>Q2. 집이 있는 유주택자나 세대원도 1순위 청약이 가능한가요?</span>
+            <span>Q2. 유주택자나 세대원도 1순위 청약이 가능한가요?</span>
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            네, 가능합니다. 수도권(서울·인천·경기)에 거주하는 만 19세 이상 성년자라면 <strong>세대주뿐만 아니라 세대원도 1순위 청약이 가능</strong>하며, 청약통장 가입기간 1년 이상 및 지역별 예치금(경기도 200만원, 인천 250만원, 서울 300만원) 충족 시 <strong>유주택자도 1순위 청약 신청</strong>이 가능합니다.
+            네, 가능합니다. 청약통장 가입기간 1년 이상 및 지역별 예치금(경기도 200만원, 인천 250만원, 서울 300만원)을 충족한 만 19세 이상 수도권 거주자라면 <strong>유주택자도 1순위 청약이 가능</strong>하며, 세대주와 세대원 누구나 청약할 수 있습니다.
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            <span>Q3. 신길온천역 및 광역 교통망 여건은 어떠한가요?</span>
+            <span>Q3. 지하철역과의 거리 및 교통 환경은 어떤가요?</span>
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            지하철 <strong>4호선과 수인분당선을 동시에 이용하는 신길온천역</strong>을 도보권(약 1km)으로 누리는 더블역세권 입지입니다. 신길온천역에서 초지역(서해선·신안산선 예정·KTX 예정)까지 약 5분, 송도역 약 27분, 가산디지털단지역 및 사당역까지 약 50분대로 이동 가능하며, 영동고속도로 및 평택시흥고속도로, 시화·반월 국가산단 직주근접 여건도 뛰어납니다.
+            단지에서 약 1km 거리에 <strong>4호선·수인분당선 신길온천역</strong>이 위치하여 도보로 더블역세권을 누릴 수 있습니다. 신길온천역에서 초지역(서해선·신안산선 예정·KTX 예정)까지 약 5분, 송도역 약 27분, 금정역·사당역·가산디지털단지역까지 40~50분대로 이동 가능합니다.
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" onclick="toggleFaq(this)">
-            <span>Q4. 단지 내 주차대수와 세대창고 제공 혜택은 무엇인가요?</span>
+            <span>Q4. 견본주택(모델하우스) 방문 예약 및 상담은 어떻게 진행되나요?</span>
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-answer">
-            공동주택 총 508대 규모로 <strong>세대당 1.5대의 넉넉한 주차공간</strong>을 확보하였으며, 101동~104동 <strong>각 동 지하 1층에 전 세대 전용 세대창고(세대당 1개소)를 기본 제공</strong>하여 계절용품, 캠핑장비, 골프용품 등을 편리하게 보관하실 수 있습니다.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            <span>Q5. 견본주택(모델하우스) 방문 예약 및 상담 신청은 어떻게 하나요?</span>
-            <span class="faq-icon">+</span>
-          </div>
-          <div class="faq-answer">
-            쾌적한 관람과 전문적인 1:1 맞춤 청약·분양 상담을 위해 사전 방문 예약제로 운영됩니다. 아래 상담 예약 폼을 작성해 주시거나 대표번호(<strong>1555-0031</strong>) 또는 문자상담(<strong>010-7181-3469</strong>)으로 연락 주시면 총괄담당(<strong>나인수</strong>)이 분양 일정 및 모델하우스 약도를 신속히 안내해 드립니다.
+            쾌적한 관람과 전문적인 1:1 맞춤 상담을 위해 사전 방문 예약제로 운영됩니다. 아래 VIP 상담 예약 폼을 작성해 주시거나 대표번호(<strong>1555-0031</strong>) 또는 문자상담(<strong>010-7181-3469</strong>)으로 연락 주시면 총괄담당(<strong>나인수</strong>)이 모델하우스 위치 약도 및 분양 일정을 신속히 안내해 드립니다.
           </div>
         </div>
       </div>
@@ -2136,10 +2609,10 @@
     <div class="container-custom">
       <div class="reservation-card">
         <div class="text-center">
-          <span class="form-header-badge">엘리프 시흥 더프라임 VIP 상담·방문예약</span>
-          <h2 class="form-head-title">원하시는 시간에 맞춤 상담받아보세요</h2>
+          <span class="form-header-badge">엘리프 시흥 더프라임 VIP 상담예약</span>
+          <h2 class="form-head-title">원하시는 시간에 맞춤 상담을 받아보세요</h2>
           <p class="form-head-desc">
-            연락처를 남겨주시면 총괄담당(<strong>나인수</strong>)이 원하시는 시간대에 상세히 안내해 드립니다.<br>
+            연락처를 남겨주시면 총괄담당(나인수)이 신속하고 정확하게 안내해 드립니다.<br>
             분양가, 청약 가점/추첨 전략, 견본주택 방문 예약까지 원스톱으로 지원합니다.
           </p>
         </div>
@@ -2156,7 +2629,6 @@
             </div>
           </div>
 
-          <!-- 방문 예약 일자 & 방문 예약 시간대 -->
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">방문 예약 일자 <span class="req">*</span></label>
@@ -2184,22 +2656,21 @@
             <div class="form-group full">
               <label class="form-label">관심 평형</label>
               <select class="form-control" id="formInterestType" name="interest_type">
-                <option value="84㎡ 전체 타입 상담">전용 84㎡ 전체 타입 상담 (84A · 84B)</option>
-                <option value="84㎡A (288세대 / 일반 259세대)">전용 84㎡ A타입 (288세대 / 일반 259세대)</option>
-                <option value="84㎡B (50세대 / 일반 45세대)">전용 84㎡ B타입 (50세대 / 일반 45세대)</option>
-                <option value="1순위 청약 자격 및 가점/추첨 상담">1순위 청약 자격 및 가점/추첨 상담</option>
+                <option value="전용 84㎡ 전체 상담">전용 84㎡ (A·B 전체 타입 상담)</option>
+                <option value="84㎡A (288세대 / 일반 259세대)">84㎡A 확장 옵션형 (전체 288세대 / 일반분양 259세대)</option>
+                <option value="84㎡B (50세대 / 일반 45세대)">84㎡B 확장 옵션형 (전체 50세대 / 일반분양 45세대)</option>
               </select>
             </div>
           </div>
 
           <div class="form-group full" style="margin-bottom:20px;">
             <label class="form-label">문의 내용 (선택)</label>
-            <textarea class="form-control" id="formMemo" name="memo" placeholder="분양가, 청약 예치금 및 자격 조건, 견본주택 방문 희망 인원 등 궁금하신 내용을 편하게 남겨주세요."></textarea>
+            <textarea class="form-control" id="formMemo" name="memo" placeholder="분양가, 1순위 청약 자격, 견본주택 방문 희망 인원 등 궁금하신 내용을 편하게 남겨주세요."></textarea>
           </div>
 
           <div class="privacy-notice">
             [개인정보 수집 및 이용 동의]<br>
-            1. 수집 항목: 성명, 전화번호, 방문 예약 일시, 관심 평형, 문의사항<br>
+            1. 수집 항목: 성명, 전화번호, 방문 예약 일시, 관심 타입, 문의사항<br>
             2. 수집 및 이용 목적: 엘리프 시흥 더프라임 분양 상담, 견본주택 방문 예약 및 분양 일정 안내<br>
             3. 보유 및 이용 기간: 분양 완료 및 상담 업무 종료 시 즉시 파기<br>
             ※ 개인정보 수집에 동의하지 않을 권리가 있으며, 거부 시 분양 상담 서비스 제공이 제한될 수 있습니다.
@@ -2215,17 +2686,15 @@
           </button>
         </form>
 
-        <!-- Direct CTA (대표번호: 1555-0031 / 문자상담: 010-7181-3469) -->
-        <div class="mt-10 pt-8 border-t border-white/10 text-center">
-          <p class="text-sm sm:text-base text-[#DCE7E1] mb-4">기다림 없이 지금 즉시 전화 또는 문자 상담을 원하시나요?</p>
-          <div class="flex flex-wrap justify-center gap-3.5">
-            <a href="tel:1555-0031" class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#041712] border-2 border-[#C8A86B] text-[#E5C98D] font-black text-lg hover:bg-[#C8A86B] hover:text-[#041511] transition" title="1555-0031 전화상담 연결">
-              <svg style="width:20px;height:20px;fill:currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-              <span>대표문의 1555-0031</span>
+        <!-- Direct Call & SMS CTA -->
+        <div class="mt-8 pt-6 border-t border-white/10 text-center">
+          <p class="text-sm text-[#DCE7E1] mb-4">기다림 없이 지금 즉시 직통 상담을 원하시나요?</p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <a href="tel:1555-0031" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#041712] border border-[#C8A86B] text-[#E5C98D] font-extrabold text-base hover:bg-[#C8A86B] hover:text-[#041511] transition">
+              📞 대표문의 1555-0031
             </a>
-            <a href="javascript:openDirectSms();" class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#092B22] border border-[#98B4A6]/50 text-white font-extrabold text-base hover:border-[#C8A86B] transition" title="010-7181-3469 문자상담 연결">
-              <svg style="width:20px;height:20px;fill:#E5C98D" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-              <span>문자상담 010-7181-3469</span>
+            <a href="javascript:openDirectSms();" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#041712] border border-white/20 text-white font-bold text-base hover:border-[#C8A86B] transition">
+              💬 문자상담 010-7181-3469
             </a>
           </div>
         </div>
@@ -2234,37 +2703,36 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 12. FOOTER (담당자: 나인수 / 대표문의: 1555-0031 / 문자상담: 010-7181-3469) -->
+  <!-- 12. FOOTER -->
   <!-- ========================================================================= -->
-  <footer class="bg-[#020C09] border-t border-white/10 py-14 pb-32 text-xs sm:text-sm text-[#7E9C8E] leading-relaxed">
+  <footer class="bg-[#030E0B] border-t border-[#C8A86B]/20 py-14 pb-32 text-xs text-[#8AA699] leading-relaxed">
     <div class="container-custom">
-      <div class="flex flex-col lg:flex-row justify-between gap-8 pb-8 border-b border-white/10">
-        <div class="space-y-2">
+      <div class="flex flex-col md:flex-row justify-between gap-8">
+        <div>
           <div class="flex items-center gap-3 mb-3">
-            <span class="px-3 py-1 rounded bg-[#004B3B] border border-[#C8A86B] text-white font-black tracking-widest">ELIF</span>
-            <strong class="text-white text-base font-extrabold">엘리프 시흥 더프라임 공식 분양홍보관</strong>
+            <span class="px-2.5 py-1 rounded bg-[#004B3B] border border-[#C8A86B] text-white font-black text-sm">ELIF</span>
+            <strong class="text-base text-white font-extrabold">엘리프 시흥 더프라임 공식 분양홍보관</strong>
           </div>
-          <p class="text-[#DCE7E1]">
-            <strong>총괄담당 : 나인수</strong> | 대표문의 : <a href="tel:1555-0031" class="text-[#E5C98D] font-extrabold">1555-0031</a> | 문자상담 : <a href="javascript:openDirectSms();" class="text-[#E5C98D] font-bold">010-7181-3469</a>
+          <p class="text-[#DCE7E1] font-semibold">
+            총괄담당: <strong class="text-[#E5C98D]">나인수</strong> &nbsp;|&nbsp;
+            대표문의: <a href="tel:1555-0031" class="text-[#E5C98D] font-extrabold">1555-0031</a> &nbsp;|&nbsp;
+            문자상담: <a href="javascript:openDirectSms();" class="text-[#E5C98D] font-bold">010-7181-3469</a>
           </p>
-          <p>사업지 위치 : 경기도 시흥시 거모지구 B-5BL (시흥거모 공공주택지구)</p>
-          <p>브랜드 : 계룡건설 ELIF (엘리프 시흥 더프라임)</p>
+          <p class="mt-1">대지위치: 경기도 시흥시 거모지구 B-5BL (전용 84㎡A·B 총 338세대)</p>
         </div>
-
-        <div class="max-w-xl space-y-1.5 text-xs text-[#688578]">
-          <p>※ 본 웹사이트에 사용된 조감도, 투시도, 배치도, 이미지 및 개발계획 등은 소비자의 이해를 돕기 위한 것으로 실제 시공 및 인허가 과정에 따라 다소 변경될 수 있습니다.</p>
-          <p>※ 상기 광역교통망 및 학교·공공시설 신설 계획 등은 관계기관 및 지자체 사정에 따라 변경·지연될 수 있으며 당사와 무관합니다.</p>
+        <div class="max-w-xl text-[11.5px] text-[#6E8B7E] space-y-1">
+          <p>※ 본 웹사이트에 사용된 조감도, 투시도, 입지 약도, 평면도 및 상품 설명은 소비자의 이해를 돕기 위한 자료로 실제 인허가 및 시공 과정에서 다소 차이가 있을 수 있습니다.</p>
+          <p>※ 상기 개발예정계획 및 광역교통망 확충 일정은 관계기관 및 지자체 사정에 따라 변경·지연될 수 있습니다.</p>
         </div>
       </div>
-      <div class="pt-5 text-xs text-[#526E62] flex flex-wrap justify-between gap-2">
-        <span>Copyright © 엘리프 시흥 더프라임 ELIF SIHEUNG THE PRIME. All Rights Reserved.</span>
-        <span>VIP 분양상담 : 1555-0031 (총괄담당 나인수)</span>
+      <div class="mt-6 pt-4 border-t border-white/10 text-[11px] text-[#567064]">
+        Copyright © ELIF SIHEUNG THE PRIME (엘리프 시흥 더프라임 공식 분양홍보관 - 나인수). All Rights Reserved.
       </div>
     </div>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- 13. FLOATING 3-TIER SPEED DIAL & MOBILE 2-TIER FIXED BOTTOM BAR -->
+  <!-- 13. FLOATING SPEED-DIAL MENU & MOBILE BOTTOM FIXED BAR -->
   <!-- ========================================================================= -->
   <div class="floating-nav-container" id="floatingNavContainer">
     <div class="floating-sub-menu" id="floatingSubMenu">
@@ -2295,20 +2763,20 @@
     </button>
   </div>
 
-  <!-- 모바일 2단 하단 고정 영역 -->
+  <!-- 모바일 하단 2단 고정 바 -->
   <div class="fixed-bottom-wrap" id="fixedBottomWrap">
     <div class="fixed-top-badges">
       <div class="fixed-badge-card">
-        <span class="badge-top">시흥거모 B-5BL</span>
-        <span class="badge-bottom">분양가상한제</span>
+        <span class="badge-top">분양가상한제 적용</span>
+        <span class="badge-bottom">34평형 5억대</span>
       </div>
       <div class="fixed-badge-card">
         <span class="badge-top">4호선·수인분당선</span>
         <span class="badge-bottom">신길온천역 도보권</span>
       </div>
       <div class="fixed-badge-card">
-        <span class="badge-top">전 세대 전용 84㎡</span>
-        <span class="badge-bottom">세대창고 기본제공</span>
+        <span class="badge-top">전 세대 지하1층</span>
+        <span class="badge-bottom">세대창고 무상제공</span>
       </div>
     </div>
 
@@ -2325,24 +2793,26 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 14. OPENING PROMOTIONAL POPUP MODAL (popup.png 표시) -->
+  <!-- 14. MAIN POPUP MODAL (popup.png 자동 노출) -->
   <!-- ========================================================================= -->
   <div class="popup-overlay" id="popupModal">
     <div class="popup-box">
-      <img src="popup.png" alt="엘리프 시흥 더프라임 분양 안내 팝업 (대표문의 1555-0031)" id="popupModalImg" class="w-full h-auto block" onerror="renderElifPopupFallback(this)">
-      <div class="grid grid-cols-2 border-t border-white/15 bg-[#062019]">
-        <a href="#reservation" onclick="closePopup()" class="py-4 text-center font-extrabold text-sm bg-[#C8A86B] text-[#041511] hover:bg-[#E5C98D] transition">
-          관심고객 바로등록
+      <div class="relative bg-[#FDFBF4]">
+        <img src="popup.png" alt="엘리프 시흥 더프라임 분양가 상한제 적용 수도권 역세권 34평 5억대" class="w-full h-auto block max-h-[75vh] object-contain mx-auto" id="popupModalImg" onerror="renderElifPopupFallback(this)">
+      </div>
+      <div class="grid grid-cols-2 border-t border-[#C8A86B]/40 bg-[#041712]">
+        <a href="#reservation" onclick="closePopup()" class="py-3.5 text-center text-sm font-black bg-[#C8A86B] text-[#041511] hover:bg-[#E5C98D] transition">
+          방문예약 신청하기
         </a>
-        <button type="button" class="btn-popup-close py-4 text-center font-extrabold text-sm bg-[#062019] text-white hover:bg-[#0B352A] transition" onclick="closePopup()">
-          닫기
+        <button type="button" onclick="closePopup()" class="py-3.5 text-center text-sm font-extrabold text-white hover:bg-white/10 transition">
+          닫기 ✕
         </button>
       </div>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 15. CUSTOM TOAST / MESSAGE MODAL (Replaces native alert()) -->
+  <!-- 15. CUSTOM TOAST / MESSAGE MODAL & IMAGE LIGHTBOX MODAL -->
   <!-- ========================================================================= -->
   <div class="popup-overlay" id="customNoticeModal" style="display: none;">
     <div class="popup-box max-w-md p-6 text-center">
@@ -2357,305 +2827,77 @@
     </div>
   </div>
 
+  <!-- 이미지 클릭 확대 보기 라이트박스 모달 -->
+  <div class="popup-overlay" id="imageLightboxModal" style="display: none;" onclick="closeImageLightbox()">
+    <div class="max-w-5xl w-full bg-[#041712] border-2 border-[#C8A86B] rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-5 py-3.5 bg-[#07221B] border-b border-[#C8A86B]/40">
+        <strong class="text-sm sm:text-base text-[#E5C98D] font-extrabold" id="lightboxCaption">엘리프 시흥 더프라임 상세 이미지</strong>
+        <button type="button" onclick="closeImageLightbox()" class="px-3 py-1 rounded-lg bg-[#041511] border border-[#C8A86B]/50 text-white text-xs font-extrabold hover:bg-[#C8A86B] hover:text-[#041511] transition">
+          ✕ 닫기
+        </button>
+      </div>
+      <div class="p-3 sm:p-5 bg-[#020D0A] max-h-[82vh] overflow-auto flex items-center justify-center">
+        <img src="" alt="확대 이미지" id="lightboxImg" class="max-w-full max-h-[76vh] w-auto h-auto object-contain mx-auto rounded-lg">
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================================================= -->
   <!-- 16. JAVASCRIPT ENGINE -->
   <!-- ========================================================================= -->
   <script>
     // =========================================================================
-    // 🎨 1. [namecard.png 고해상도 1200x630 자동 생성 엔진 (총괄담당 나인수 / 1555-0031)]
+    // 🔍 이미지 라이트박스 제어 & 세대평면 탭 전환
     // =========================================================================
-    let cachedNamecardDataUrl = null;
-
-    function generateElifNamecardDataUrl() {
-      if (cachedNamecardDataUrl) return cachedNamecardDataUrl;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 630;
-      const ctx = canvas.getContext('2d');
-
-      // 1. 배경: PDF 1페이지 세이지 미스트 그라데이션 (#EBF2EE -> #DCE7E1)
-      const bgGrad = ctx.createLinearGradient(0, 0, 1200, 630);
-      bgGrad.addColorStop(0, '#EEF5F1');
-      bgGrad.addColorStop(0.65, '#DCE7E1');
-      bgGrad.addColorStop(1, '#C7DBD0');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 1200, 630);
-
-      // 2. 하단 딥 에메랄드 VIP 명함 바 (#042019)
-      ctx.fillStyle = '#042019';
-      ctx.fillRect(0, 515, 1200, 115);
-      ctx.fillStyle = '#C8A86B';
-      ctx.fillRect(0, 512, 1200, 4);
-
-      // 3. 좌측 아파트 단지 & 도시 스카이라인 일러스트
-      ctx.fillStyle = 'rgba(0, 75, 59, 0.12)';
-      const bgTowers = [
-        [45, 360, 38, 152], [92, 340, 45, 172], [440, 390, 32, 122],
-        [480, 375, 38, 137], [525, 400, 30, 112], [565, 385, 35, 127]
-      ];
-      bgTowers.forEach(([x, y, w, h]) => ctx.fillRect(x, y, w, h));
-
-      const mainTowers = [
-        { x: 115, y: 270, w: 68, h: 242, roof: '#004B3B', body: '#F7FAF8', side: '#C8DBD1' },
-        { x: 215, y: 185, w: 86, h: 327, roof: '#004B3B', body: '#FFFFFF', side: '#B8D0C4' },
-        { x: 332, y: 235, w: 78, h: 277, roof: '#004B3B', body: '#F7FAF8', side: '#C8DBD1' },
-        { x: 422, y: 285, w: 62, h: 227, roof: '#004B3B', body: '#EEF5F1', side: '#B8D0C4' }
-      ];
-
-      mainTowers.forEach(t => {
-        ctx.fillStyle = t.side;
-        ctx.fillRect(t.x - 14, t.y + 8, 14, t.h - 8);
-        ctx.fillStyle = t.body;
-        ctx.fillRect(t.x, t.y, t.w, t.h);
-        ctx.strokeStyle = '#004B3B';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(t.x, t.y, t.w, t.h);
-        ctx.fillStyle = t.roof;
-        ctx.fillRect(t.x + 6, t.y - 10, t.w - 12, 10);
-        ctx.fillStyle = 'rgba(0, 75, 59, 0.25)';
-        for (let wy = t.y + 18; wy < t.y + t.h - 20; wy += 16) {
-          ctx.fillRect(t.x + 12, wy, 14, 9);
-          ctx.fillRect(t.x + 34, wy, 14, 9);
-          if (t.w > 70) ctx.fillRect(t.x + 56, wy, 14, 9);
-        }
-      });
-
-      ctx.strokeStyle = '#6E9685';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(470, 495);
-      ctx.lineTo(830, 435);
-      ctx.stroke();
-
-      ctx.fillStyle = '#0B5241';
-      ctx.beginPath();
-      ctx.moveTo(0, 512);
-      ctx.quadraticCurveTo(260, 475, 560, 512);
-      ctx.closePath();
-      ctx.fill();
-
-      // 4. PDF 1페이지 시그니처 S-커브 아치 라인
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(18, 512);
-      ctx.lineTo(18, 210);
-      ctx.bezierCurveTo(60, -25, 520, -20, 650, 225);
-      ctx.bezierCurveTo(760, 430, 1030, 435, 1190, 320);
-      ctx.strokeStyle = '#004B3B';
-      ctx.lineWidth = 7;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(26, 512);
-      ctx.lineTo(26, 215);
-      ctx.bezierCurveTo(68, -12, 525, -8, 656, 232);
-      ctx.bezierCurveTo(766, 438, 1035, 442, 1192, 328);
-      ctx.strokeStyle = '#C8A86B';
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      ctx.restore();
-
-      // 5. 우측 상단/중단 타이포그래피
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#063328';
-      ctx.font = '600 23px "Pretendard", sans-serif';
-      ctx.fillText('입 증 된   가 치  —  새 로 운   프 리 미 엄', 1140, 58);
-
-      ctx.fillStyle = '#004B3B';
-      ctx.beginPath();
-      ctx.roundRect(940, 145, 200, 38, 19);
-      ctx.fill();
-      ctx.fillStyle = '#E5C98D';
-      ctx.font = '800 17px "Pretendard", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('시흥거모지구 B-5BL', 1040, 170);
-
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#04221B';
-      ctx.font = '800 44px "Pretendard", sans-serif';
-      ctx.fillText('엘리프 시흥 더프라임', 1140, 238);
-
-      ctx.fillStyle = '#004B3B';
-      ctx.font = '900 74px "Pretendard", sans-serif';
-      ctx.fillText('E L I F', 1140, 322);
-
-      const badges = [
-        '✔ 분양가상한제 합리적 분양가',
-        '✔ 4호선·수인분당선 신길온천역 도보권',
-        '✔ 100% 전용 84㎡ · 전 세대 세대창고'
-      ];
-      badges.forEach((text, idx) => {
-        const by = 352 + idx * 36;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.beginPath();
-        ctx.roundRect(810, by, 330, 30, 8);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0, 75, 59, 0.25)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = '#04221B';
-        ctx.font = '700 15px "Pretendard", sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(text, 1126, by + 20);
-      });
-
-      // 6. 하단 VIP 명함 바 텍스트 (나인수 / 1555-0031 / 010-7181-3469)
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#E5C98D';
-      ctx.font = '800 16px "Pretendard", sans-serif';
-      ctx.fillText('ELIF SIHEUNG THE PRIME OFFICIAL LOUNGE', 48, 554);
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 28px "Pretendard", sans-serif';
-      ctx.fillText('엘리프 시흥 더프라임 공식 분양홍보관', 48, 592);
-
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#DCE7E1';
-      ctx.font = '700 17px "Pretendard", sans-serif';
-      ctx.fillText('총괄담당 나인수  |  문자상담 010-7181-3469', 1152, 552);
-
-      ctx.fillStyle = '#E5C98D';
-      ctx.font = '900 34px "Pretendard", sans-serif';
-      ctx.fillText('대표문의 ☎ 1555-0031', 1152, 596);
-
-      cachedNamecardDataUrl = canvas.toDataURL('image/png');
-      return cachedNamecardDataUrl;
+    function openImageLightbox(src, caption) {
+      const modal = document.getElementById('imageLightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      if (modal && img) {
+        img.src = src;
+        if (cap) cap.textContent = caption || '엘리프 시흥 더프라임 상세 이미지';
+        modal.style.display = 'flex';
+      }
     }
 
-    function renderElifNamecardFallback(imgEl) {
-      if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
-      imgEl.dataset.fallbackApplied = 'true';
-      imgEl.src = generateElifNamecardDataUrl();
+    function closeImageLightbox() {
+      const modal = document.getElementById('imageLightboxModal');
+      if (modal) modal.style.display = 'none';
     }
 
-    // =========================================================================
-    // 🎨 2. [popup.png 고해상도 800x960 팝업 이미지 자동 생성 엔진]
-    // 로컬/배포 환경에 popup.png 파일이 있으면 해당 파일을 표시하고,
-    // 미리보기 환경에서 파일이 없을 경우 ELIF 브랜드 팝업 이미지를 즉시 생성하여 보여줍니다.
-    // =========================================================================
-    let cachedPopupDataUrl = null;
+    function switchUnitPlanTab(mode) {
+      const grid = document.getElementById('unitPlanGrid');
+      const cardA = document.getElementById('unitCard84A');
+      const cardB = document.getElementById('unitCard84B');
+      const tabAll = document.getElementById('unitTabAll');
+      const tabA = document.getElementById('unitTab84A');
+      const tabB = document.getElementById('unitTab84B');
 
-    function generateElifPopupDataUrl() {
-      if (cachedPopupDataUrl) return cachedPopupDataUrl;
+      const activeClass = 'px-5 py-2.5 rounded-full text-xs sm:text-sm font-black bg-[#C8A86B] text-[#041511] shadow-md transition';
+      const inactiveClass = 'px-5 py-2.5 rounded-full text-xs sm:text-sm font-extrabold bg-[#07221B] text-[#DCE7E1] border border-[#C8A86B]/40 hover:border-[#C8A86B] transition';
 
-      const canvas = document.createElement('canvas');
-      canvas.width = 800;
-      canvas.height = 940;
-      const ctx = canvas.getContext('2d');
-
-      // 배경 그라데이션 (ELIF 딥 에메랄드)
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, 940);
-      bgGrad.addColorStop(0, '#072C23');
-      bgGrad.addColorStop(0.55, '#041A14');
-      bgGrad.addColorStop(1, '#02100C');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 800, 940);
-
-      // 골드 프레임 테두리
-      ctx.strokeStyle = '#C8A86B';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(22, 22, 756, 896);
-      ctx.strokeStyle = 'rgba(200, 168, 107, 0.35)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(32, 32, 736, 876);
-
-      // 상단 S-커브 장식 아치
-      ctx.beginPath();
-      ctx.moveTo(32, 220);
-      ctx.bezierCurveTo(220, 40, 560, 320, 768, 130);
-      ctx.strokeStyle = 'rgba(200, 168, 107, 0.25)';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      // 상단 뱃지
-      ctx.fillStyle = '#C8A86B';
-      ctx.beginPath();
-      ctx.roundRect(230, 68, 340, 42, 21);
-      ctx.fill();
-      ctx.fillStyle = '#041511';
-      ctx.font = '900 19px "Pretendard", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('시흥거모 공공주택지구 B-5BL', 400, 96);
-
-      // 서브 슬로건 & 메인 타이틀
-      ctx.fillStyle = '#DCE7E1';
-      ctx.font = '600 22px "Pretendard", sans-serif';
-      ctx.fillText('입 증 된   가 치  —  새 로 운   프 리 미 엄', 400, 152);
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 54px "Pretendard", sans-serif';
-      ctx.fillText('엘리프 시흥 더프라임', 400, 222);
-
-      ctx.fillStyle = '#E5C98D';
-      ctx.font = '900 44px "Pretendard", sans-serif';
-      ctx.fillText('E L I F', 400, 278);
-
-      // 중앙 핵심 프리미엄 4대 카드 박스
-      const items = [
-        { badge: 'POINT 01', title: '합리적 내 집 마련 분양가상한제 적용', sub: '약 1만 8천 세대 거모·신길2지구 미래가치 선점' },
-        { badge: 'POINT 02', title: '4호선·수인분당선 신길온천역 도보권', sub: '초지역 약 5분 · 사당/가산디지털단지 50분대 쾌속교통' },
-        { badge: 'POINT 03', title: '거모지구 내 귀한 100% 전용 84㎡', sub: '84㎡A(288세대) · 84㎡B(50세대) 총 338세대 명품 단지' },
-        { badge: 'POINT 04', title: '전 세대 지하1층 세대창고 기본 제공', sub: '세대당 1.5대 넉넉한 주차공간 & 다채로운 웰빙 커뮤니티' }
-      ];
-
-      items.forEach((item, i) => {
-        const y = 315 + i * 112;
-        ctx.fillStyle = 'rgba(9, 43, 34, 0.92)';
-        ctx.beginPath();
-        ctx.roundRect(68, y, 664, 96, 14);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(200, 168, 107, 0.55)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // 좌측 포인트 배지
-        ctx.fillStyle = '#C8A86B';
-        ctx.beginPath();
-        ctx.roundRect(92, y + 26, 110, 44, 10);
-        ctx.fill();
-        ctx.fillStyle = '#041511';
-        ctx.font = '900 17px "Pretendard", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(item.badge, 147, y + 54);
-
-        // 우측 텍스트
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '800 23px "Pretendard", sans-serif';
-        ctx.fillText(item.title, 224, y + 44);
-
-        ctx.fillStyle = '#A3BDB1';
-        ctx.font = '600 16px "Pretendard", sans-serif';
-        ctx.fillText(item.sub, 224, y + 74);
-      });
-
-      // 하단 상담 안내 박스 (총괄담당 나인수 / 대표문의 1555-0031 / 문자상담 010-7181-3469)
-      ctx.fillStyle = '#082E24';
-      ctx.beginPath();
-      ctx.roundRect(68, 775, 664, 112, 16);
-      ctx.fill();
-      ctx.strokeStyle = '#E5C98D';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#DCE7E1';
-      ctx.font = '700 19px "Pretendard", sans-serif';
-      ctx.fillText('총괄담당 : 나인수   |   문자상담 : 010-7181-3469', 400, 814);
-
-      ctx.fillStyle = '#E5C98D';
-      ctx.font = '900 38px "Pretendard", sans-serif';
-      ctx.fillText('대표문의 ☎ 1555-0031', 400, 866);
-
-      cachedPopupDataUrl = canvas.toDataURL('image/png');
-      return cachedPopupDataUrl;
-    }
-
-    function renderElifPopupFallback(imgEl) {
-      if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
-      imgEl.dataset.fallbackApplied = 'true';
-      imgEl.src = generateElifPopupDataUrl();
+      if (mode === '84a') {
+        grid.className = 'grid grid-cols-1 max-w-4xl mx-auto gap-8';
+        cardA.classList.remove('hidden');
+        cardB.classList.add('hidden');
+        tabA.className = activeClass;
+        tabAll.className = inactiveClass;
+        tabB.className = inactiveClass;
+      } else if (mode === '84b') {
+        grid.className = 'grid grid-cols-1 max-w-4xl mx-auto gap-8';
+        cardB.classList.remove('hidden');
+        cardA.classList.add('hidden');
+        tabB.className = activeClass;
+        tabAll.className = inactiveClass;
+        tabA.className = inactiveClass;
+      } else {
+        grid.className = 'grid grid-cols-1 lg:grid-cols-2 gap-8';
+        cardA.classList.remove('hidden');
+        cardB.classList.remove('hidden');
+        tabAll.className = activeClass;
+        tabA.className = inactiveClass;
+        tabB.className = inactiveClass;
+      }
     }
 
     // Custom Modal Notification Function (No alert())
@@ -2777,20 +3019,29 @@
       }
     }
 
-    // 7. 페이지 로드 초기화 (popup.png 팝업 자동 오픈 & namecard.png 캔버스 보장)
+    // 7. 페이지 로드 초기화 (popup.png 팝업 자동 오픈 & 전체 이미지 로드 상태 점검)
     window.addEventListener('DOMContentLoaded', function() {
       openPopup();
 
       const topImg = document.getElementById('topNamecardImg');
       const popImg = document.getElementById('popupModalImg');
+      const inlinePopImg = document.getElementById('inlinePopupImg');
+      const heroMainImg = document.getElementById('heroMainImg');
+      const overviewMainImg = document.getElementById('overviewMainImg');
+      const infraMainImg = document.getElementById('infraMainImg');
+      const communityIsoImg = document.getElementById('communityIsoImg');
+      const unitImg84A = document.getElementById('unitImg84A');
+      const unitImg84B = document.getElementById('unitImg84B');
 
-      if (topImg && topImg.complete && topImg.naturalWidth === 0) {
-        renderElifNamecardFallback(topImg);
-      }
-
-      if (popImg && popImg.complete && popImg.naturalWidth === 0) {
-        renderElifPopupFallback(popImg);
-      }
+      if (topImg && topImg.complete && topImg.naturalWidth === 0) renderElifNamecardFallback(topImg);
+      if (popImg && popImg.complete && popImg.naturalWidth === 0) renderElifPopupFallback(popImg);
+      if (inlinePopImg && inlinePopImg.complete && inlinePopImg.naturalWidth === 0) renderElifPopupFallback(inlinePopImg);
+      if (heroMainImg && heroMainImg.complete && heroMainImg.naturalWidth === 0) renderElifMainPerspectiveFallback(heroMainImg);
+      if (overviewMainImg && overviewMainImg.complete && overviewMainImg.naturalWidth === 0) renderElifMainPerspectiveFallback(overviewMainImg);
+      if (infraMainImg && infraMainImg.complete && infraMainImg.naturalWidth === 0) handleInfraImgError(infraMainImg);
+      if (communityIsoImg && communityIsoImg.complete && communityIsoImg.naturalWidth === 0) handleCommunityImgError(communityIsoImg);
+      if (unitImg84A && unitImg84A.complete && unitImg84A.naturalWidth === 0) handleUnitImgError(unitImg84A, '84A');
+      if (unitImg84B && unitImg84B.complete && unitImg84B.naturalWidth === 0) handleUnitImgError(unitImg84B, '84B');
 
       showSlide(0);
       startSlideInterval();
