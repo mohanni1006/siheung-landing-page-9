@@ -329,6 +329,41 @@
       imgEl.src = generateElifPopupDataUrl();
     }
 
+    function handleJogamdoImgError(imgEl) {
+      if (!imgEl) return;
+      if (!imgEl.dataset.step) {
+        imgEl.dataset.step = '1';
+        imgEl.src = '조감도.png';
+        return;
+      }
+      if (imgEl.dataset.step === '1') {
+        imgEl.dataset.step = '2';
+        imgEl.src = encodeURI('조감도.png');
+        return;
+      }
+      if (imgEl.dataset.step === '2') {
+        imgEl.dataset.step = '3';
+        imgEl.src = 'main.jpg';
+        return;
+      }
+      renderElifMainPerspectiveFallback(imgEl);
+    }
+
+    function handleMainImgError(imgEl) {
+      if (!imgEl) return;
+      if (!imgEl.dataset.step) {
+        imgEl.dataset.step = '1';
+        imgEl.src = 'main_2.jpg';
+        return;
+      }
+      if (imgEl.dataset.step === '1') {
+        imgEl.dataset.step = '2';
+        imgEl.src = 'main.png';
+        return;
+      }
+      renderElifMainPerspectiveFallback(imgEl);
+    }
+
     function renderElifMainPerspectiveFallback(imgEl) {
       if (!imgEl || imgEl.dataset.fallbackApplied === 'true') return;
       imgEl.dataset.fallbackApplied = 'true';
@@ -410,8 +445,13 @@
 
     function handleInfraImgError(imgEl) {
       if (!imgEl) return;
-      if (!imgEl.dataset.triedEncoded) {
-        imgEl.dataset.triedEncoded = 'true';
+      if (!imgEl.dataset.step) {
+        imgEl.dataset.step = '1';
+        imgEl.src = '인프라_2.jpg';
+        return;
+      }
+      if (imgEl.dataset.step === '1') {
+        imgEl.dataset.step = '2';
         imgEl.src = encodeURI('인프라.jpg');
         return;
       }
@@ -512,8 +552,13 @@
 
     function handleCommunityImgError(imgEl) {
       if (!imgEl) return;
-      if (!imgEl.dataset.triedEncoded) {
-        imgEl.dataset.triedEncoded = 'true';
+      if (!imgEl.dataset.step) {
+        imgEl.dataset.step = '1';
+        imgEl.src = '커뮤니티 시설_2.jpg';
+        return;
+      }
+      if (imgEl.dataset.step === '1') {
+        imgEl.dataset.step = '2';
         imgEl.src = encodeURI('커뮤니티 시설.jpg');
         return;
       }
@@ -607,9 +652,14 @@
 
     function handleUnitImgError(imgEl, unitType) {
       if (!imgEl) return;
-      if (!imgEl.dataset.triedLower) {
-        imgEl.dataset.triedLower = 'true';
+      if (!imgEl.dataset.step) {
+        imgEl.dataset.step = '1';
         imgEl.src = unitType === '84A' ? '84a.png' : '84b.png';
+        return;
+      }
+      if (imgEl.dataset.step === '1') {
+        imgEl.dataset.step = '2';
+        imgEl.src = unitType === '84A' ? '84A.PNG' : '84B.PNG';
         return;
       }
       if (imgEl.dataset.fallbackApplied === 'true') return;
@@ -1628,96 +1678,11 @@
 <body>
 
   <!-- ========================================================================= -->
-  <!-- 1. HEADER GNB -->
-  <!-- ========================================================================= -->
-  <header id="main-header">
-    <div class="container-custom">
-      <div class="nav-inner">
-        <a href="#top-visual" class="brand-logo" title="엘리프 시흥 더프라임 메인">
-          <span class="brand-logo-mark">ELIF</span>
-          <div class="brand-logo-text">
-            <span class="brand-logo-sub">SIHEUNG THE PRIME</span>
-            <span class="brand-logo-main">엘리프 시흥 더프라임</span>
-          </div>
-        </a>
-        <nav>
-          <ul class="nav-menu" id="navMenu">
-            <li><a href="#hero">단지특장점</a></li>
-            <li><a href="#location">입지·교통</a></li>
-            <li><a href="#overview">사업개요</a></li>
-            <li><a href="#premium">프리미엄6</a></li>
-            <li><a href="#siteplan">단지배치도</a></li>
-            <li><a href="#types">세대평면</a></li>
-            <li><a href="#subscription">1순위청약</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#reservation" class="nav-cta-btn">상담예약</a></li>
-          </ul>
-        </nav>
-        <div class="nav-actions gap-2">
-          <button type="button" onclick="openPopup()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#092B22] border border-[#C8A86B]/60 text-[#E5C98D] text-xs font-bold hover:bg-[#0D3B2E] transition" title="팝업창(popup.png) 다시보기">
-            <span>🔔 팝업 보기</span>
-          </button>
-          <button class="mobile-menu-toggle" id="menuToggle" aria-label="메뉴 열기">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- ========================================================================= -->
-  <!-- 2. 최상단 대표 이미지 namecard.png 배너 -->
-  <!-- ========================================================================= -->
-  <section class="top-visual-banner" id="top-visual">
-    <div class="top-visual-inner">
-      <img src="namecard.png" alt="엘리프 시흥 더프라임 최상단 대표 이미지 (나인수)" class="main-top-img" id="topNamecardImg" onerror="renderElifNamecardFallback(this)">
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 3. MAIN HERO SECTION (#hero) -->
-  <!-- ========================================================================= -->
-  <section id="hero">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span>ELIF SIHEUNG THE PRIME</span>
-        <span>•</span>
-        <span>시흥거모 공공주택지구 B-5BL 공식 분양안내</span>
-      </div>
-      <h1 class="hero-title">
-        시흥거모의 중심에서 만나는 새로운 프리미엄<br>
-        <span class="text-[#E5C98D]">엘리프 시흥 더프라임</span>
-      </h1>
-      <p class="hero-desc">
-        <span>4호선·수인분당선 신길온천역 더블역세권과 약 1만 8천 세대 거모·신길2지구의 비전</span><br>
-        <span>분양가상한제 적용 수도권 역세권 34평형 5억대 합리적 내 집 마련 기회를 선점하세요</span>
-      </p>
-
-      <div class="hero-info-group">
-        <div class="hero-info-card primary">
-          <span class="info-sub">분양가상한제 적용 단지</span>
-          <span class="info-main">34평형 5억대</span>
-        </div>
-        <div class="hero-info-card secondary">
-          <span class="info-sub">4호선 · 수인분당선</span>
-          <span class="info-main">더블 역세권</span>
-        </div>
-        <div class="hero-info-card primary">
-          <span class="info-sub">전 세대 지하1층 기본 제공</span>
-          <span class="info-main">세대창고 & 1.5대 주차</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 3-2. 메인 투시도 배너 (main.jpg 배치) -->
+  <!-- 3-2. 메인 조감도 배너 (조감도.png 배치 - 석양/노을 시그니처 뷰) -->
   <!-- ========================================================================= -->
   <section class="top-visual-banner" id="main-perspective">
-    <div class="top-visual-inner relative group cursor-pointer" onclick="openImageLightbox(document.getElementById('heroMainImg').src, '엘리프 시흥 더프라임 메인 투시도')">
-      <img src="main.jpg" alt="엘리프 시흥 더프라임 메인 투시도" class="main-top-img" id="heroMainImg" onerror="renderElifMainPerspectiveFallback(this)">
+    <div class="top-visual-inner relative group cursor-pointer" onclick="openImageLightbox(document.getElementById('heroJogamdoImg').src, '엘리프 시흥 더프라임 석양 조감도')">
+      <img src="조감도.png" alt="엘리프 시흥 더프라임 메인 조감도" class="main-top-img" id="heroJogamdoImg" onerror="handleJogamdoImgError(this)">
       <div class="absolute bottom-4 right-4 bg-[#041511]/85 border border-[#C8A86B]/70 text-[#E5C98D] text-xs font-bold px-3.5 py-1.5 rounded-full backdrop-blur-sm flex items-center gap-1.5 shadow-lg">
         <span>🔍 이미지를 클릭하면 크게 보실 수 있습니다</span>
       </div>
@@ -2013,7 +1978,7 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 5. PROJECT OVERVIEW (#overview - main.jpg 조감도/투시도 + 사업개요표) -->
+  <!-- 5. PROJECT OVERVIEW (#overview - main.jpg 주간 투시도 + 사업개요표) -->
   <!-- ========================================================================= -->
   <section id="overview" class="section-elif-alt">
     <div class="container-custom">
@@ -2023,11 +1988,11 @@
         <p class="desc-head">시흥거모지구 B-5BL | 세대당 1.5대 넉넉한 주차공간과 100% 전용 84㎡ 명품 단지</p>
       </div>
 
-      <!-- 사업개요 대표 투시도 프레임 (main.jpg) -->
-      <div class="mb-8 rounded-2xl overflow-hidden border-2 border-[#C8A86B]/50 shadow-2xl bg-[#041712] relative cursor-pointer" onclick="openImageLightbox(document.getElementById('overviewMainImg').src, '엘리프 시흥 더프라임 단지 투시도')">
-        <img src="main.jpg" alt="엘리프 시흥 더프라임 사업개요 투시도" class="w-full h-auto block max-h-[540px] object-cover" id="overviewMainImg" onerror="renderElifMainPerspectiveFallback(this)">
+      <!-- 사업개요 대표 주간 투시도 프레임 (main.jpg) -->
+      <div class="mb-8 rounded-2xl overflow-hidden border-2 border-[#C8A86B]/50 shadow-2xl bg-[#041712] relative cursor-pointer" onclick="openImageLightbox(document.getElementById('overviewMainImg').src, '엘리프 시흥 더프라임 단지 투시도 (주간 전경)')">
+        <img src="main.jpg" alt="엘리프 시흥 더프라임 사업개요 투시도 (주간 전경)" class="w-full h-auto block max-h-[540px] object-cover" id="overviewMainImg" onerror="handleMainImgError(this)">
         <div class="bg-[#041712]/95 px-5 py-3 border-t border-[#C8A86B]/30 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="text-[#E5C98D] font-extrabold">ELIF SIHEUNG THE PRIME | 경기도 시흥시 거모지구 B-5BL (총 338세대)</span>
+          <span class="text-[#E5C98D] font-extrabold">ELIF SIHEUNG THE PRIME | 경기도 시흥시 거모지구 B-5BL (주간 전경)</span>
           <span class="text-[#98B4A6]">※ 클릭 시 투시도 원본 확대</span>
         </div>
       </div>
@@ -3026,7 +2991,7 @@
       const topImg = document.getElementById('topNamecardImg');
       const popImg = document.getElementById('popupModalImg');
       const inlinePopImg = document.getElementById('inlinePopupImg');
-      const heroMainImg = document.getElementById('heroMainImg');
+      const heroJogamdoImg = document.getElementById('heroJogamdoImg');
       const overviewMainImg = document.getElementById('overviewMainImg');
       const infraMainImg = document.getElementById('infraMainImg');
       const communityIsoImg = document.getElementById('communityIsoImg');
@@ -3036,8 +3001,8 @@
       if (topImg && topImg.complete && topImg.naturalWidth === 0) renderElifNamecardFallback(topImg);
       if (popImg && popImg.complete && popImg.naturalWidth === 0) renderElifPopupFallback(popImg);
       if (inlinePopImg && inlinePopImg.complete && inlinePopImg.naturalWidth === 0) renderElifPopupFallback(inlinePopImg);
-      if (heroMainImg && heroMainImg.complete && heroMainImg.naturalWidth === 0) renderElifMainPerspectiveFallback(heroMainImg);
-      if (overviewMainImg && overviewMainImg.complete && overviewMainImg.naturalWidth === 0) renderElifMainPerspectiveFallback(overviewMainImg);
+      if (heroJogamdoImg && heroJogamdoImg.complete && heroJogamdoImg.naturalWidth === 0) handleJogamdoImgError(heroJogamdoImg);
+      if (overviewMainImg && overviewMainImg.complete && overviewMainImg.naturalWidth === 0) handleMainImgError(overviewMainImg);
       if (infraMainImg && infraMainImg.complete && infraMainImg.naturalWidth === 0) handleInfraImgError(infraMainImg);
       if (communityIsoImg && communityIsoImg.complete && communityIsoImg.naturalWidth === 0) handleCommunityImgError(communityIsoImg);
       if (unitImg84A && unitImg84A.complete && unitImg84A.naturalWidth === 0) handleUnitImgError(unitImg84A, '84A');
